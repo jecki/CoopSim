@@ -5,7 +5,7 @@ A computer simulation of the evolution of
 cooperation, based on the book of R.Axelrod: "The
 Evolution of Cooperation"
 
-Version: 0.9.9 beta 2 (March 10, 2007)
+Version: 0.9.9 beta 6 (September 6th, 2015)
 
 (c) 2015 by Eckhart Arnold, MIT Open Source License
 
@@ -34,12 +34,22 @@ over a sequence of tournaments.
 CoopSim is open source software under the MIT License
 (https://opensource.org/licenses/MIT).
 
+Most of the development of CoopSim took place 10 years ago. While I still
+add changes so that it can run on current machines, I do not think it is
+really worth while to develop it further. Due to the use of the wxPython
+widgets toolkit it cannot even be ported to Python3.
+
+There exists another project with the same goal, however, that is being
+actively developed, and which I'd like to recommend to anyone interested
+in this kind of computer simulations: 
+https://github.com/Axelrod-Python/Axelrod
+
 
 Manual
 ------
 
 There CoopSim-Manual can be read online: 
-http://www.eckhartarnold.de/apppages/onlinedocs/CoopSim_Doc/toc.html
+http://www.eckhartarnold.de/apppages/onlinedocs/CoopSim_Doc/toc.html 
 
 
 Some Remarks on Game Theoretical Simulation Models
