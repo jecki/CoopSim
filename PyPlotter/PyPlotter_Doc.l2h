@@ -1,0 +1,19 @@
+# fill in the right values and run latex2html.py again!
+
+PROJECT_TITLE = 'PyPlotter - A Python/Jython Graph Plotting Package. Manual'
+TOC_TITLE = 'Contents'
+BIBLIOGERAPHY_TITLE = 'Bibliography'
+AUTHOR = 'Eckhart Arnold'
+AUTHOR_STR = 'Author'
+REFERENCE = 'Eckhart Arnold'
+PDFURL = 'PyPlotter_Doc.pdf'
+DESCRIPTION = 'Manual for the Jython/Python graph plotting package PyPlotter'
+KEYWORDS = 'PyPlotter, MultiPlot'
+LANG = 'en'
+DATE_STR = 'Date'
+BIB_STR = "Bibliographical information"
+CITE_STR = "Citing:"
+BIBTEX_STR = "BibTeX record:"
+CITATION_INFO = """"""
+BIBTEX_INFO = """"""
+METADATA_BLOB = """"""

@@ -1,0 +1,17 @@
+__pycache__
+.project
+.pydevproject
+/__bugreports/
+*~
+.settings
+/tmp/
+*.pyc
+/dist/
+*.out
+*.tbl
+/docs/CoopSim_Doc/
+/docs/CoopSim_Doc_old/
+/PyPlotter/html_docs/
+*.pdf
+*.dvi
+

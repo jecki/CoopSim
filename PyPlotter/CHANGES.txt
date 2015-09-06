@@ -1,0 +1,127 @@
+PyPlotter Version 0.9.2 (5.9.2015)
+..................................
+
+PyPlotter is now released unter the more liberal MIT License
+see https://opensource.org/licenses/MIT
+
+
+PyPlotter Version 0.9.1 (25.2.2015)
+...................................
+
+Finally, compatibility with Python 2 and 3! (Biggest Problem was the slightly
+different way imports arre handled in Python 2 and 3.
+
+
+PyPlotter Version 0.9.0 (2.9.2013)
+..................................
+
+Fixed a bug in awtGfx.py, compatibility to Jython 2.5 was broken. 
+(Thanks to Walter Kruse!)
+
+
+PyPlotter Version 0.8.9 (17.9.2009)
+...................................
+
+Bugfixes in wxGfx.py to ensure compatibility with the
+latest wxPython Versions (2.8.10)
+
+removed deprecated postscript output from wxGfx.py.
+psGfx.py can be used instead
+
+
+PyPlotter Version 0.8.8 (20.8.2008)
+...................................
+
+Various Changes for Python 3.0 compatibility. PyPlotter is now 
+compatible with Python 2.5, 2.6, 3.0 and Jython 2.2
+
+Added support for the qt GUI toolkit
+
+Tweaking of rotated Text in tkGfx, so that the results are more
+similar to those of the other toolkits.
+
+Implemented line style, line width and fill style for awtGfx.
+
+
+PyPlotter Version 0.8.7 (15.2.2008)
+...................................
+
+Some bugfixes
+
+Strongly simplified usage of class Graph.Cartesian, i.e. Pens will
+automatically be generated, if they have not been added before. 
+
+
+PyPlotter Version 0.8.6 (26.2.2006)
+...................................
+
+Added psGfx, a driver for rendering postscript images. (Fill patterns
+are not yet supported in the psGfx module!) 
+
+Many bugfixes, especially in the modules Graph.py and Simplex.py
+
+wxGfx.DumpPostscript now has a parameter orientation to set the
+orientation ("Portrait" or "Landscape") of the postscript output
+
+
+PyPlotter Version 0.8.5 (24.8.2005)
+...................................
+
+fixed method Graph.Cartesian.reset so that drawing on a logarithmic
+scale after calling reset works correctly now
+
+adjusted wxGfx.Driver.writeStr for better compatibility with
+some Versions of wxWindows if text is rotated
+
+fixed flag MASK_GRAPHSTYLE so that Cartesian.setStyle redraws
+the Graph if caller has switched between linear and logarithmic
+scale
+
+module gtkGfx now uses True and False instead of the deprecated
+gtk.TRUE and gtk.FALSE
+
+
+
+PyPlotter Version 0.8.4 (15.6.2005)
+...................................
+
+added function GetDriver to the module Compatibility
+
+adjustments for compatibility with jython 2.2 alpha
+
+fixed buggy setStyle method in class Cartesian
+
+
+
+PyPlotter Version 0.8.3 (2.12.2004)
+...................................
+
+Changed name to PyPlotter, because it sounds better and is less 
+mistakable
+	
+Added class OptimizingFilter for faster output of very big graphs 
+to module Graph.py
+
+Bugfixes in modules gtkGfx.py and tkGfx.py to avoid error messages
+or crashes when methods drawPoly or fillPoly are called with an empty
+array of points 
+	
+	
+	
+MultiPlot Version 0.8.2
+.......................
+
+Adjustment of the compatibility wrapper in wxGfx, so that it is compatible 
+with wxPython 2.5.2 and higher
+
+Workaround for buggy DC.DrawRotatedText() method in wxPython with Gtk.
+
+
+
+
+MultiPlot Version 0.8.1
+.......................
+
+Put the call of dc.GetResolution() into a try error clause to avaid
+getting errors with certain versions of wxGTK.
+

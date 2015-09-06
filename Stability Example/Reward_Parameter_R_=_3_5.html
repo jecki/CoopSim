@@ -1,0 +1,512 @@
+<html>
+<head>
+<title>Reward Parameter R = 3.5</title>
+</head>
+<body>
+<h3><a name="top"></a>CoopSim - Simulation: Reward Parameter R = 3.5</h3>
+
+<h4><a name="toc"></a>Table of Contents</h4>
+
+<p><a href="#setup">0. Simulation Setup</a><br />
+<a href="#ranking">1. Tournament Ranking</a><br />
+<a href="#results">2. Match Results</a><br />
+<a href="#logs">3. Detailed Match Logs</a><br />
+<a href="#evranking">4. Evolutionary Simulation</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#generation50">Ranking after 50 generations</a><br />
+</p><br />
+<p><h4><a name="setup"></a>Simulation setup of Reward Parameter R = 3.5</h4><br />
+
+<b>Strategies:</b> Dove, Grim, Hawk, Joss, Random, TatForTit, TitForTat<br /><br />
+
+<tt>uniform population distribution<br />
+<br />
+payoff parameters:&nbsp;T,R,P,S = 5.00, 3.50, 1.00, 0.00<br />
+iterations:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1000<br />
+match samples:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10<br />
+</tt></p>
+<div align="right"><a href="#top">[top]</a></div><br />
+<h4><a name="ranking"></a>Tournament Ranking:</h4><br />
+
+<p><tt>Dove:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.7023<br />
+TitForTat:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.4907<br />
+Grim:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.3605<br />
+Random:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.0814<br />
+Hawk:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.8614<br />
+TatForTit:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.7757<br />
+Joss:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.6066<br />
+</tt></p><div align="right"><a href="#top">[top]</a></div><br /><br />
+
+<h4><a name="results"></a>Match Results:</h4><br />
+
+<p><pre><a href="#Dove_vs_Dove">Dove : Dove                                3.500 : 3.500</a>
+<a href="#Dove_vs_Grim">Dove : Grim                                3.500 : 3.500</a>
+<a href="#Dove_vs_Hawk">Dove : Hawk                                0.000 : 5.000</a>
+<a href="#Dove_vs_Joss">Dove : Joss                                3.150 : 3.650</a>
+<a href="#Dove_vs_Random">Dove : Random                              1.770 : 4.241</a>
+<a href="#Dove_vs_TatForTit">Dove : TatForTit                           3.497 : 3.502</a>
+<a href="#Dove_vs_TitForTat">Dove : TitForTat                           3.500 : 3.500</a>
+<a href="#Grim_vs_Grim">Grim : Grim                                3.500 : 3.500</a>
+<a href="#Grim_vs_Hawk">Grim : Hawk                                0.999 : 1.004</a>
+<a href="#Grim_vs_Joss">Grim : Joss                                1.027 : 1.027</a>
+<a href="#Grim_vs_Random">Grim : Random                              2.995 : 0.508</a>
+<a href="#Grim_vs_TatForTit">Grim : TatForTit                           1.003 : 1.003</a>
+<a href="#Grim_vs_TitForTat">Grim : TitForTat                           3.500 : 3.500</a>
+<a href="#Hawk_vs_Hawk">Hawk : Hawk                                1.000 : 1.000</a>
+<a href="#Hawk_vs_Joss">Hawk : Joss                                1.004 : 0.999</a>
+<a href="#Hawk_vs_Random">Hawk : Random                              3.018 : 0.495</a>
+<a href="#Hawk_vs_TatForTit">Hawk : TatForTit                           1.000 : 1.000</a>
+<a href="#Hawk_vs_TitForTat">Hawk : TitForTat                           1.004 : 0.999</a>
+<a href="#Joss_vs_Joss">Joss : Joss                                1.031 : 1.030</a>
+<a href="#Joss_vs_Random">Joss : Random                              2.443 : 2.184</a>
+<a href="#Joss_vs_TatForTit">Joss : TatForTit                           1.038 : 1.038</a>
+<a href="#Joss_vs_TitForTat">Joss : TitForTat                           1.058 : 1.053</a>
+<a href="#Random_vs_Random">Random : Random                            2.420 : 2.322</a>
+<a href="#Random_vs_TatForTit">Random : TatForTit                         2.384 : 2.387</a>
+<a href="#Random_vs_TitForTat">Random : TitForTat                         2.385 : 2.383</a>
+<a href="#TatForTit_vs_TatForTit">TatForTit : TatForTit                      1.000 : 1.000</a>
+<a href="#TatForTit_vs_TitForTat">TatForTit : TitForTat                      2.500 : 2.500</a>
+<a href="#TitForTat_vs_TitForTat">TitForTat : TitForTat                      3.500 : 3.500</a>
+</pre></p>
+<div align="right"><a href="#top">[top]</a></div><br /><br />
+
+<h4><a name="logs"></a>Detailed Match Logs:</h4><br />
+
+<p><pre><a name="Dove_vs_Dove"></a>Dove : Dove                                3.500 : 3.500</pre>
+<pre>1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+</pre>...
+<pre>1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+</pre></p><br />
+
+<div align="right"><a href="#top">[top]</a></div><br />
+<p><pre><a name="Dove_vs_Grim"></a>Dove : Grim                                3.500 : 3.500</pre>
+<pre>1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+</pre>...
+<pre>1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+</pre></p><br />
+
+<div align="right"><a href="#top">[top]</a></div><br />
+<p><pre><a name="Dove_vs_Hawk"></a>Dove : Hawk                                0.000 : 5.000</pre>
+<pre>1 0   1 0   1 0   1 0   1 0   1 0   1 0   1 0   1 0   1 0
+1 0   1 0   1 0   1 0   1 0   1 0   1 0   1 0   1 0   1 0
+1 0   1 0   1 0   1 0   1 0   1 0   1 0   1 0   1 0   1 0
+1 0   1 0   1 0   1 0   1 0   1 0   1 0   1 0   1 0   1 0
+1 0   1 0   1 0   1 0   1 0   1 0   1 0   1 0   1 0   1 0
+</pre>...
+<pre>1 0   1 0   1 0   1 0   1 0   1 0   1 0   1 0   1 0   1 0
+1 0   1 0   1 0   1 0   1 0   1 0   1 0   1 0   1 0   1 0
+1 0   1 0   1 0   1 0   1 0   1 0   1 0   1 0   1 0   1 0
+1 0   1 0   1 0   1 0   1 0   1 0   1 0   1 0   1 0   1 0
+1 0   1 0   1 0   1 0   1 0   1 0   1 0   1 0   1 0   1 0
+</pre></p><br />
+
+<div align="right"><a href="#top">[top]</a></div><br />
+<p><pre><a name="Dove_vs_Joss"></a>Dove : Joss                                3.150 : 3.650</pre>
+<pre>1 1   1 1   1 1   1 1   1 0   1 1   1 0   1 1   1 1   1 0
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 0   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+</pre>...
+<pre>1 1   1 1   1 1   1 1   1 1   1 0   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 0   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+</pre></p><br />
+
+<div align="right"><a href="#top">[top]</a></div><br />
+<p><pre><a name="Dove_vs_Random"></a>Dove : Random                              1.770 : 4.241</pre>
+<pre>1 1   1 0   1 1   1 1   1 1   1 1   1 0   1 1   1 0   1 0
+1 0   1 0   1 1   1 1   1 1   1 1   1 0   1 0   1 1   1 1
+1 1   1 0   1 1   1 0   1 0   1 1   1 1   1 1   1 0   1 1
+1 1   1 1   1 1   1 1   1 1   1 0   1 0   1 0   1 1   1 0
+1 1   1 1   1 0   1 0   1 0   1 0   1 0   1 0   1 1   1 0
+</pre>...
+<pre>1 1   1 1   1 1   1 0   1 0   1 0   1 1   1 0   1 1   1 1
+1 0   1 0   1 1   1 1   1 1   1 0   1 0   1 0   1 1   1 0
+1 0   1 0   1 1   1 1   1 0   1 1   1 0   1 1   1 0   1 0
+1 0   1 0   1 1   1 0   1 1   1 0   1 0   1 0   1 0   1 1
+1 0   1 1   1 1   1 0   1 1   1 1   1 1   1 0   1 1   1 1
+</pre></p><br />
+
+<div align="right"><a href="#top">[top]</a></div><br />
+<p><pre><a name="Dove_vs_TatForTit"></a>Dove : TatForTit                           3.497 : 3.502</pre>
+<pre>1 0   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+</pre>...
+<pre>1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+</pre></p><br />
+
+<div align="right"><a href="#top">[top]</a></div><br />
+<p><pre><a name="Dove_vs_TitForTat"></a>Dove : TitForTat                           3.500 : 3.500</pre>
+<pre>1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+</pre>...
+<pre>1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+</pre></p><br />
+
+<div align="right"><a href="#top">[top]</a></div><br />
+<p><pre><a name="Grim_vs_Grim"></a>Grim : Grim                                3.500 : 3.500</pre>
+<pre>1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+</pre>...
+<pre>1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+</pre></p><br />
+
+<div align="right"><a href="#top">[top]</a></div><br />
+<p><pre><a name="Grim_vs_Hawk"></a>Grim : Hawk                                0.999 : 1.004</pre>
+<pre>1 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+</pre>...
+<pre>0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+</pre></p><br />
+
+<div align="right"><a href="#top">[top]</a></div><br />
+<p><pre><a name="Grim_vs_Joss"></a>Grim : Joss                                1.027 : 1.027</pre>
+<pre>1 1   1 1   1 1   1 1   1 0   0 1   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+</pre>...
+<pre>0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+</pre></p><br />
+
+<div align="right"><a href="#top">[top]</a></div><br />
+<p><pre><a name="Grim_vs_Random"></a>Grim : Random                              2.995 : 0.508</pre>
+<pre>1 1   1 0   0 0   0 1   0 0   0 1   0 1   0 1   0 0   0 1
+0 0   0 0   0 0   0 1   0 1   0 0   0 1   0 1   0 0   0 0
+0 0   0 0   0 1   0 0   0 1   0 0   0 0   0 0   0 1   0 0
+0 1   0 0   0 0   0 0   0 1   0 1   0 0   0 0   0 0   0 0
+0 1   0 1   0 1   0 1   0 1   0 0   0 1   0 0   0 1   0 1
+</pre>...
+<pre>0 1   0 0   0 0   0 1   0 1   0 0   0 0   0 0   0 0   0 0
+0 0   0 1   0 1   0 0   0 0   0 1   0 0   0 0   0 1   0 0
+0 0   0 0   0 0   0 1   0 1   0 1   0 0   0 1   0 1   0 0
+0 1   0 1   0 0   0 0   0 0   0 0   0 1   0 1   0 0   0 0
+0 1   0 0   0 0   0 1   0 0   0 1   0 1   0 1   0 1   0 0
+</pre></p><br />
+
+<div align="right"><a href="#top">[top]</a></div><br />
+<p><pre><a name="Grim_vs_TatForTit"></a>Grim : TatForTit                           1.003 : 1.003</pre>
+<pre>1 0   0 1   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+</pre>...
+<pre>0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+</pre></p><br />
+
+<div align="right"><a href="#top">[top]</a></div><br />
+<p><pre><a name="Grim_vs_TitForTat"></a>Grim : TitForTat                           3.500 : 3.500</pre>
+<pre>1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+</pre>...
+<pre>1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+</pre></p><br />
+
+<div align="right"><a href="#top">[top]</a></div><br />
+<p><pre><a name="Hawk_vs_Hawk"></a>Hawk : Hawk                                1.000 : 1.000</pre>
+<pre>0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+</pre>...
+<pre>0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+</pre></p><br />
+
+<div align="right"><a href="#top">[top]</a></div><br />
+<p><pre><a name="Hawk_vs_Joss"></a>Hawk : Joss                                1.004 : 0.999</pre>
+<pre>0 1   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+</pre>...
+<pre>0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+</pre></p><br />
+
+<div align="right"><a href="#top">[top]</a></div><br />
+<p><pre><a name="Hawk_vs_Random"></a>Hawk : Random                              3.018 : 0.495</pre>
+<pre>0 0   0 1   0 1   0 0   0 1   0 1   0 0   0 0   0 1   0 0
+0 0   0 1   0 0   0 1   0 0   0 1   0 1   0 1   0 1   0 1
+0 1   0 1   0 1   0 0   0 1   0 0   0 1   0 0   0 1   0 0
+0 1   0 1   0 0   0 0   0 0   0 1   0 0   0 1   0 0   0 0
+0 1   0 0   0 0   0 0   0 0   0 0   0 0   0 1   0 0   0 0
+</pre>...
+<pre>0 1   0 0   0 0   0 0   0 1   0 0   0 0   0 1   0 1   0 0
+0 0   0 1   0 0   0 0   0 1   0 1   0 1   0 1   0 1   0 0
+0 0   0 1   0 0   0 0   0 0   0 1   0 0   0 0   0 0   0 0
+0 1   0 1   0 1   0 0   0 1   0 1   0 1   0 0   0 0   0 0
+0 1   0 0   0 0   0 0   0 0   0 1   0 0   0 0   0 0   0 0
+</pre></p><br />
+
+<div align="right"><a href="#top">[top]</a></div><br />
+<p><pre><a name="Hawk_vs_TatForTit"></a>Hawk : TatForTit                           1.000 : 1.000</pre>
+<pre>0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+</pre>...
+<pre>0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+</pre></p><br />
+
+<div align="right"><a href="#top">[top]</a></div><br />
+<p><pre><a name="Hawk_vs_TitForTat"></a>Hawk : TitForTat                           1.004 : 0.999</pre>
+<pre>0 1   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+</pre>...
+<pre>0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+</pre></p><br />
+
+<div align="right"><a href="#top">[top]</a></div><br />
+<p><pre><a name="Joss_vs_Joss"></a>Joss : Joss                                1.031 : 1.030</pre>
+<pre>1 1   1 0   0 1   1 0   0 1   1 0   0 1   1 0   0 1   1 0
+0 1   1 0   0 1   1 0   0 1   1 0   0 1   1 0   0 1   1 0
+0 1   1 0   0 1   1 0   0 1   1 0   0 1   1 0   0 1   1 0
+0 1   1 0   0 1   1 0   0 1   1 0   0 1   1 0   0 1   1 0
+0 1   1 0   0 1   1 0   0 1   1 0   0 1   1 0   0 0   0 0
+</pre>...
+<pre>0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+</pre></p><br />
+
+<div align="right"><a href="#top">[top]</a></div><br />
+<p><pre><a name="Joss_vs_Random"></a>Joss : Random                              2.443 : 2.184</pre>
+<pre>1 0   0 0   0 1   1 0   0 0   0 1   1 1   1 0   0 1   1 0
+0 1   1 1   1 0   0 0   0 1   1 0   0 1   1 1   1 0   0 0
+0 0   0 1   1 1   1 1   1 0   0 0   0 0   0 1   1 1   0 1
+1 1   1 1   1 1   1 1   0 0   0 0   0 1   1 0   0 0   0 1
+1 0   0 1   1 0   0 1   1 0   0 0   0 0   0 1   1 0   0 0
+</pre>...
+<pre>0 0   0 0   0 0   0 0   0 1   1 0   0 0   0 1   1 1   1 0
+0 1   1 1   1 0   0 1   1 1   1 1   1 0   0 1   1 0   0 1
+1 0   0 0   0 0   0 1   1 1   1 0   0 0   0 1   1 0   0 0
+0 0   0 1   1 0   0 0   0 1   1 1   1 1   1 0   0 1   1 0
+0 0   0 0   0 0   0 1   1 0   0 1   1 1   1 0   0 0   0 1
+</pre></p><br />
+
+<div align="right"><a href="#top">[top]</a></div><br />
+<p><pre><a name="Joss_vs_TatForTit"></a>Joss : TatForTit                           1.038 : 1.038</pre>
+<pre>1 0   0 1   1 0   0 1   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+</pre>...
+<pre>0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+</pre></p><br />
+
+<div align="right"><a href="#top">[top]</a></div><br />
+<p><pre><a name="Joss_vs_TitForTat"></a>Joss : TitForTat                           1.058 : 1.053</pre>
+<pre>1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   0 1   1 0   0 1   1 0   0 1   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+</pre>...
+<pre>0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+</pre></p><br />
+
+<div align="right"><a href="#top">[top]</a></div><br />
+<p><pre><a name="Random_vs_Random"></a>Random : Random                            2.420 : 2.322</pre>
+<pre>0 1   0 0   1 1   1 1   0 1   1 1   0 1   0 1   0 0   0 0
+1 1   0 0   0 0   0 0   1 1   0 1   1 0   1 0   0 0   1 0
+0 0   0 0   1 0   0 1   1 1   1 1   0 1   1 0   1 0   0 1
+0 0   1 0   1 1   0 0   1 1   0 1   1 1   0 0   0 0   0 1
+1 1   0 0   1 1   1 0   1 1   0 0   0 1   0 1   0 0   0 1
+</pre>...
+<pre>0 1   0 0   1 0   1 1   1 1   0 0   1 1   0 1   1 0   1 0
+1 0   1 0   1 1   1 0   1 0   1 0   1 1   1 0   1 1   0 1
+1 0   0 0   1 0   0 1   1 0   1 1   0 1   1 0   0 1   0 0
+0 0   0 0   1 0   0 0   0 1   0 1   0 0   1 0   0 1   0 0
+0 1   1 1   0 1   1 0   0 0   1 0   1 1   0 0   0 1   1 1
+</pre></p><br />
+
+<div align="right"><a href="#top">[top]</a></div><br />
+<p><pre><a name="Random_vs_TatForTit"></a>Random : TatForTit                         2.384 : 2.387</pre>
+<pre>0 0   0 0   1 0   0 1   0 0   1 0   1 1   1 1   1 1   0 1
+0 0   1 0   0 1   0 0   1 0   1 1   1 1   1 1   0 1   0 0
+1 0   0 1   0 0   1 0   1 1   1 1   0 1   0 0   0 0   1 0
+0 1   1 0   1 1   0 1   0 0   1 0   0 1   1 0   0 1   0 0
+0 0   1 0   0 1   1 0   0 1   0 0   0 0   1 0   0 1   1 0
+</pre>...
+<pre>1 0   1 1   1 1   0 1   0 0   0 0   0 0   1 0   1 1   0 1
+1 0   0 1   0 0   1 0   1 1   0 1   0 0   0 0   0 0   0 0
+0 0   1 0   0 1   0 0   0 0   1 0   1 1   0 1   0 0   1 0
+1 1   1 1   1 1   1 1   1 1   1 1   0 1   1 0   0 1   0 0
+1 0   1 1   1 1   1 1   0 1   0 0   0 0   0 0   0 0   1 0
+</pre></p><br />
+
+<div align="right"><a href="#top">[top]</a></div><br />
+<p><pre><a name="Random_vs_TitForTat"></a>Random : TitForTat                         2.385 : 2.383</pre>
+<pre>0 1   0 0   0 0   0 0   1 0   0 1   0 0   0 0   0 0   0 0
+0 0   0 0   1 0   0 1   1 0   0 1   1 0   1 1   1 1   1 1
+1 1   0 1   1 0   0 1   0 0   0 0   1 0   1 1   0 1   0 0
+1 0   1 1   1 1   1 1   1 1   1 1   0 1   1 0   0 1   1 0
+0 1   0 0   1 0   1 1   1 1   1 1   0 1   0 0   1 0   0 1
+</pre>...
+<pre>0 0   0 0   0 0   0 0   1 0   0 1   1 0   0 1   1 0   0 1
+1 0   0 1   1 0   1 1   0 1   0 0   1 0   1 1   1 1   1 1
+1 1   1 1   1 1   0 1   0 0   0 0   1 0   0 1   1 0   0 1
+0 0   0 0   1 0   1 1   0 1   1 0   0 1   1 0   0 1   0 0
+1 0   1 1   0 1   1 0   1 1   0 1   0 0   0 0   1 0   0 1
+</pre></p><br />
+
+<div align="right"><a href="#top">[top]</a></div><br />
+<p><pre><a name="TatForTit_vs_TatForTit"></a>TatForTit : TatForTit                      1.000 : 1.000</pre>
+<pre>0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+</pre>...
+<pre>0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0   0 0
+</pre></p><br />
+
+<div align="right"><a href="#top">[top]</a></div><br />
+<p><pre><a name="TatForTit_vs_TitForTat"></a>TatForTit : TitForTat                      2.500 : 2.500</pre>
+<pre>0 1   1 0   0 1   1 0   0 1   1 0   0 1   1 0   0 1   1 0
+0 1   1 0   0 1   1 0   0 1   1 0   0 1   1 0   0 1   1 0
+0 1   1 0   0 1   1 0   0 1   1 0   0 1   1 0   0 1   1 0
+0 1   1 0   0 1   1 0   0 1   1 0   0 1   1 0   0 1   1 0
+0 1   1 0   0 1   1 0   0 1   1 0   0 1   1 0   0 1   1 0
+</pre>...
+<pre>0 1   1 0   0 1   1 0   0 1   1 0   0 1   1 0   0 1   1 0
+0 1   1 0   0 1   1 0   0 1   1 0   0 1   1 0   0 1   1 0
+0 1   1 0   0 1   1 0   0 1   1 0   0 1   1 0   0 1   1 0
+0 1   1 0   0 1   1 0   0 1   1 0   0 1   1 0   0 1   1 0
+0 1   1 0   0 1   1 0   0 1   1 0   0 1   1 0   0 1   1 0
+</pre></p><br />
+
+<div align="right"><a href="#top">[top]</a></div><br />
+<p><pre><a name="TitForTat_vs_TitForTat"></a>TitForTat : TitForTat                      3.500 : 3.500</pre>
+<pre>1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+</pre>...
+<pre>1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1   1 1
+</pre></p><br />
+
+<div align="right"><a href="#top">[top]</a></div><br />
+<h4><a name="evranking"></a>Evolutionary Simulation:</h4><br />
+
+<a href="#generation50">Ranking after 50 generations</a><br />
+
+<h5><a name="generation50"></a>Ranking after 50 generations:</h5><br />
+
+<p><pre>  1.Dove                                    0.3779  (3.5000)
+  2.TitForTat                               0.3358  (3.5000)
+  3.Grim                                    0.2863  (3.5000)
+  4.Random                                  0.0000  (2.5493)
+  5.Hawk                                    0.0000  (2.5142)
+  6.TatForTit                               0.0000  (2.4499)
+  7.Joss                                    0.0000  (2.0288)
+</pre><br />
+<div align="center"><a href="Reward_Parameter_R_=_3.5_images/Reward_Parameter_R_=_3.5_gn50.png"><img src="Reward_Parameter_R_=_3.5_images/Reward_Parameter_R_=_3.5_gn50_web.png"" alt="Image: Reward_Parameter_R_=_3.5_gn50.png not found!" /></a></div><br />
+</p>
+<div align="right"><a href="#top">[top]</a></div><br />
+</body>
+</html>
