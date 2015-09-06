@@ -42,8 +42,8 @@ There CoopSim-Manual can be read online:
 http://www.eckhartarnold.de/apppages/onlinedocs/CoopSim_Doc/toc.html
 
 
-Some Further Remarks
---------------------
+Some Remarks on Game Theoretical Simulation Models
+--------------------------------------------------
 
 While I enjoyed programming CoopSim and doing Prisoner's Dilemma simulations, 
 I have grown more and more skeptical about of game theory as a scientific 
