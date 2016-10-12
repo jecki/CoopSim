@@ -5,6 +5,6 @@ setup(name="PyPlotter",
       author="Eckhart Arnold",
       license="MIT",
       url="http://www.eckhartarnold.de/apppages/pyplotter.html",
-      author_email="eckhart_arnold@yahoo.de",
+      author_email="eckhart_arnold@hotmail.com",
       packages=["PyPlotter"]
       )

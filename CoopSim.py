@@ -107,7 +107,7 @@ GPLMissingMessage = """
 The MIT License (MIT)
 
 Copyright (c) 2004 Eckhart Arnold
-                   (Email: eckhart_arnold@yahoo.de
+                   (Email: eckhart_arnold@hotmail.com
                     Web:   www.eckhartarnold.de)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy

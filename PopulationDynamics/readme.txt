@@ -10,7 +10,7 @@ Version: 0.1.0  alpha  (June 15th 2005)
 
 Author: Eckhart Arnold
 web:    www.eckhartarnold.de
-email:  eckhart_arnold@yahoo.de
+email:  eckhart_arnold@hotmail.com
 
 
 

@@ -5,6 +5,6 @@ setup(name="PopulationDynamics",
       author="Eckhart Arnold",
       license="MITL",
       # url="http://www.eckhartarnold.de/apppages/popdynamics.html",
-      author_email="eckhart_arnold@yahoo.de",
+      author_email="eckhart_arnold@hotmail.com",
       packages=["PopulationDynamics"],
       )

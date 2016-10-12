@@ -11,7 +11,7 @@ Version: 0.9.9 beta 6 (September 6th, 2015)
 
 Author: Eckhart Arnold
 web:    www.eckhartarnold.de
-email:  eckhart_arnold@yahoo.de
+email:  eckhart_arnold@hotmail.com
 
 
 Description

@@ -4,7 +4,7 @@ PyPlotter - A Python / Jython Plotting Library
 Version: 0.9.2 beta (September, 5th 2015)
 
 Author: Eckhart Arnold
-Email:  eckhart_arnold@yahoo.de
+Email:  eckhart_arnold@hotmail.com
 Web:	www.eckhartarnold.de
 
 (c) 2004 Eckhart Arnold under the MIT License (opensource.org/licenses/MIT)
