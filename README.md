@@ -82,5 +82,5 @@ integrated with empirical research:
 
 [What's wrong with social simulations? in: The Monist 2014 (97,3), 361-379, DOI: 10.5840/monist201497323](http://www.eckhartarnold.de/papers/2014_Social_Simulations/Whats_wrong_with_social_simulations.html)
 
-[Simulation  Models  of   the  Evolution  of   Cooperation  as Proofs of  Logical Possibilities. How Useful Are They? in: Etica & Politica / Ethics & Politics, XV, 2013, 2, pp. 101-138](http://www.eckhartarnold.de/papers/2013_Simulations_as_Logical_Possibilities/Arnold_2013_Simulations_as_Proofs_of_Logical_Possibilities.pdf)
+[Simulation  Models  of   the  Evolution  of   Cooperation  as Proofs of  Logical Possibilities. How Useful Are They? in: Etica & Politica / Ethics & Politics, XV, 2013, 2, pp. 101-138, hdl.handle.net/10077/9679](http://www.eckhartarnold.de/papers/2013_Simulations_as_Logical_Possibilities/Arnold_2013_Simulations_as_Proofs_of_Logical_Possibilities.pdf)
 
