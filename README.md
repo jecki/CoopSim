@@ -49,7 +49,7 @@ https://github.com/Axelrod-Python/Axelrod
 Manual
 ------
 
-There CoopSim-Manual can be read online: 
+The CoopSim-Manual can be read online: 
 http://www.eckhartarnold.de/apppages/onlinedocs/CoopSim_Doc/toc.html 
 
 
@@ -78,16 +78,9 @@ scientists that it is important to be concerned about how their simulations
 can be validated empirically and how their theoretical findings can be 
 integrated with empirical research:
 
-[How Models Fail. A Critical Look at the History of Computer
-Simulations of the Evolution of Cooperation, in: Catrin Misselhorn
-(Ed.): Collective Agency and Cooperation in Natural and Artificial
-Systems. Explanation, Implementation and Simulation, Philosophical
-Studies Series, Springer 2015, DOI 10.1007/978-3-319-15515-9,
-pp. 261-279.]
-(http://www.eckhartarnold.de/papers/2015_How_Models_Fail/How_models_fail.html)
+[How Models Fail. A Critical Look at the History of Computer Simulations of the Evolution of Cooperation, in: Catrin Misselhorn (Ed.): Collective Agency and Cooperation in Natural and Artificial Systems. Explanation, Implementation and Simulation, Philosophical Studies Series, Springer 2015, DOI 10.1007/978-3-319-15515-9, pp. 261-279.](http://www.eckhartarnold.de/papers/2015_How_Models_Fail/How_models_fail.html)
 
 [What's wrong with social simulations? in: The Monist 2014 (97,3), 361-379, DOI: 10.5840/monist201497323](http://www.eckhartarnold.de/papers/2014_Social_Simulations/Whats_wrong_with_social_simulations.html)
 
-[Simulation  Models  of   the  Evolution  of   Cooperation  as Proofs of  Logical Possibilities. How Useful Are They? in: Etica & Politica
-/ Ethics & Politics, XV, 2013, 2, pp. 101-138](http://www.eckhartarnold.de/papers/2013_Simulations_as_Logical_Possibilities/Arnold_2013_Simulations_as_Proofs_of_Logical_Possibilities.pdf)
+[Simulation  Models  of   the  Evolution  of   Cooperation  as Proofs of  Logical Possibilities. How Useful Are They? in: Etica & Politica / Ethics & Politics, XV, 2013, 2, pp. 101-138](http://www.eckhartarnold.de/papers/2013_Simulations_as_Logical_Possibilities/Arnold_2013_Simulations_as_Proofs_of_Logical_Possibilities.pdf)
 
