@@ -1,8 +1,9 @@
 # simulation setup and simulation objects
 # WORST SPAGETTI CODE EVER!
 
-from __future__ import generators # retain python 2.2 compatibility
+ # retain python 2.2 compatibility
 import copy, re
+
 from PyPlotter import Gfx, Colors
 from PopulationDynamics import Dynamics
 import PrisonersDilemma as PD
@@ -11,6 +12,7 @@ from PolymorphicStrategies import PolymorphicStrategy
 import GroupSelection as GS
 from PopulationDynamics.Compatibility import *
 from Logging import H1,H2,H3, H1X,H2X,H3X, LogNotificationInterface, HTMLLog
+from functools import reduce
 
 
 NUM_GENERATIONS = 50 # number of generations to start with in the
@@ -75,16 +77,16 @@ class RichPDDeme(GS.PDDeme):
         deme have the same order as setup.strategyList!"""
         species_dict = {};  share_dict = {}
         for deme in (self,)+others:
-            for i in xrange(len(deme.species)):
+            for i in range(len(deme.species)):
                 species = deme.species[i]
                 name = str(species)
-                if species_dict.has_key(name):
+                if name in species_dict:
                     share_dict[name] += deme.distribution[i]
                 else:
                     species_dict[name] = species
                     share_dict[name] = deme.distribution[i]
         species = [s for s in self.setup.strategyList \
-                   if species_dict.has_key(s.name)] # keep species order!
+                   if s.name in species_dict] # keep species order!
         dist = array([share_dict[s.name] for s in species])
         return self.new(species, dist)
 
@@ -183,12 +185,12 @@ class Mutator(object):
         """
         original, mutated, rate = self.original, self.mutated, self.rate
         d = {}
-        for i in xrange(len(dst)):  d[dst[i].name] = i
+        for i in range(len(dst)):  d[dst[i].name] = i
         original_name = src[self.original].name
         mutated_name = src[self.mutated].name
-        if d.has_key(original_name):  original = d[original_name]
+        if original_name in d:  original = d[original_name]
         else: rate = 0.0
-        if d.has_key(mutated_name):  mutated = d[mutated_name]
+        if mutated_name in d:  mutated = d[mutated_name]
         else: mutated = len(dst)
         return Mutator(original, mutated, rate)
 
@@ -259,7 +261,7 @@ class SimSetup(object):
         # names make no difference! if self.name != other.name:  return False
         if len(self.strategyList) != len(other.strategyList):
             return False
-        for i in xrange(len(self.strategyList)):
+        for i in range(len(self.strategyList)):
             if self.strategyList[i] != other.strategyList[i]:  return False
         if tuple(self.population) != tuple(other.population):  return False
         if self.correlation != other.correlation:  return False
@@ -271,7 +273,7 @@ class SimSetup(object):
         if len(self.mutators) != len(other.mutators):
             return False
         if self.demes != other.demes: return False
-        for i in xrange(len(self.mutators)):
+        for i in range(len(self.mutators)):
             if self.mutators[i] != other.mutators[i]:  return False
         return True
 
@@ -348,14 +350,14 @@ class SimSetup(object):
         strategyList only."""
         if self.indexDict == None:
             self.indexDict = {}
-            for i in xrange(len(self.strategyList)):
+            for i in range(len(self.strategyList)):
                 self.indexDict[self.strategyList[i].name] = i
         m = self.getPayoffMatrix()
         l = len(strategies)
         dm = zeros((l,l),"d")
-        for i in xrange(l):
+        for i in range(l):
             r = self.indexDict[strategies[i].name]
-            for k in xrange(l):
+            for k in range(l):
                 c = self.indexDict[strategies[k].name]
                 dm[i,k] = m[r,c]
         return dm
@@ -383,7 +385,7 @@ class SimSetup(object):
         for p in self.population:
             if abs(p - p0) > scale:
                 pop = [rr("%1.5f"%s) for s in self.population]
-                lines = [", ".join(pop[i:i+5]) for i in xrange(0,len(pop),5)]
+                lines = [", ".join(pop[i:i+5]) for i in range(0,len(pop),5)]
                 html.append("<b>population shares:</b><br />\n")
                 html.append("<br />\n".join(lines))
                 html.append("<br /><br />\n\n")
@@ -440,13 +442,13 @@ class xaxisIter(object):
     def __init__(self, graph, x1, x2):
         self.graph = graph
         a = self.graph._scaleX(x1);  b = self.graph._scaleX(x2)
-        self.rngIter = xrange(a, b+2).__iter__()
-        self.pos = self.graph._invX(self.rngIter.next())
+        self.rngIter = range(a, b+2).__iter__()
+        self.pos = self.graph._invX(next(self.rngIter))
 
     def check(self, x):
         if x >= self.pos:
             try:
-                self.pos = self.graph._invX(self.rngIter.next())
+                self.pos = self.graph._invX(next(self.rngIter))
             except StopIteration:
                 pass # actually this should never happen, catching it anyway!
             return True
@@ -579,13 +581,13 @@ class Simulation(object):
     def _bestT(self):
         """-> (n,m) best and second best strategy in the tournament."""
         M = self.payoffMatrix
-        l = [(sum(M[i]),i) for i in xrange(self.numStgies)]
+        l = [(sum(M[i]),i) for i in range(self.numStgies)]
         l.sort(reverse=True)
         return (l[0][1], l[1][1], l[2][1])
 
     def _bestP(self):
         """-> (n,m) best and second best strategy populationwise."""
-        l = [(self.setup.population[i], i) for i in xrange(self.numStgies)]
+        l = [(self.setup.population[i], i) for i in range(self.numStgies)]
         l.sort(reverse=True)
         return (l[0][1], l[1][1], l[2][1])
 
@@ -694,7 +696,7 @@ class Simulation(object):
         pixelSteps = xaxisIter(self.graph, self.firstGeneration,
                                self.lastGeneration)
         refreshTicker = (self.lastGeneration + 1 - self.firstGeneration) / 10
-        for i in xrange(self.firstGeneration, self.lastGeneration+1):
+        for i in range(self.firstGeneration, self.lastGeneration+1):
             p = self.dynamics(self.masterDeme)
             if pixelSteps.check(i):
                 k = 0
@@ -716,9 +718,9 @@ class Simulation(object):
         self.log.append("\n"+H3+'<a name="'+anchor+'"></a>' +\
                         "Ranking after %i generations:" % \
                         self.lastGeneration + H3X + "<br />\n\n<p><pre>")
-        ranking = zip(self.setup.population,
+        ranking = list(zip(self.setup.population,
             Dynamics.QuickFitness2(self.setup.population, self.payoffMatrix),
-            [str(s) for s in self.setup.strategyList])
+            [str(s) for s in self.setup.strategyList]))
         ranking.sort();  ranking.reverse()
         k = 1
         for r, f, name in ranking:

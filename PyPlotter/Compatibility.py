@@ -3,6 +3,10 @@
 """Provides code snipplets for ompatibility with older python versions.
 """
 
+def __pragma__(*args):
+    pass
+
+__pragma__('skip')
 try:
     set
 except NameError:
@@ -29,10 +33,11 @@ import sys
 if sys.platform[:4] == "java" and sys.version[:3] == "2.2":
     class object: # avoid problems with copy.deepcopy
         pass
-
+__pragma__('noskip')
 
 def GetDriver(check=["qtGfx", "gtkGfx", "wxGfx", "tkGfx", "awtGfx"]):
     """Get any available Gfx Driver."""
+    __pragma__('skip')
     for wish in check:
         if wish == "qtGfx":
             try:
@@ -79,3 +84,6 @@ def GetDriver(check=["qtGfx", "gtkGfx", "wxGfx", "tkGfx", "awtGfx"]):
             except ImportError:
                 pass
     raise ImportError("Could not find a graphics drivers for PyPlotter!\n\n")
+    __pragma__('noskip')
+    import canvasGfx
+    return canvasGfx

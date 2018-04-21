@@ -27,11 +27,10 @@ from Strategies import *
 
 class PolymorphicStrategy(Strategy):
     """Abstract base class for all polymorphic strategies.
-    """ 
+    """
     def evolve(self, deme):
         """Adjusts the polymorphic strategy."""
         raise NotImplementedError
-
 
 
 ###############################################################################
@@ -39,6 +38,7 @@ class PolymorphicStrategy(Strategy):
 # Base class for meta strategies
 #
 ###############################################################################
+
 
 class MetaStrategy(PolymorphicStrategy):
     """Abstract base class for all meta strategies.
@@ -63,9 +63,9 @@ class MetaStrategy(PolymorphicStrategy):
         """
         ## debugging:
         self.generationCounter += 1
-        
+
         ranking = [(strategies[i], performances[i]) \
-                   for i in xrange(len(strategies)) \
+                   for i in range(len(strategies)) \
                    if not isinstance(strategies[i], PolymorphicStrategy)]
         ranking.sort(key = lambda x: -x[1])
         bestP = ranking[0][1]
@@ -77,7 +77,7 @@ class MetaStrategy(PolymorphicStrategy):
             i += 1
         selected = random.choice(ranking[:i])[0]
         # print ["%s (%f)"%(str(s),f) for s,f in ranking]
-        # print str(self.generationCounter) + ", " + str(self)+": "+str(self.snatched)+" -> "+str(selected)       
+        # print str(self.generationCounter) + ", " + str(self)+": "+str(self.snatched)+" -> "+str(selected)
         self.snatch(selected)
 
     def register(self, simSetup):
@@ -91,11 +91,11 @@ class MetaStrategy(PolymorphicStrategy):
 
     def evolve(self, deme):
         raise NotImplementedError
-    
+
     def snatch(self, stgy):
         """Imitate the strategy 'stgy' in the following generations."""
         assert not isinstance(stgy, PolymorphicStrategy), \
-            "Polymorphic strategies cannot be imitated themselves."      
+            "Polymorphic strategies cannot be imitated themselves."
         self.snatched = copy.copy(stgy)
         self.randomizing = stgy.randomizing
 

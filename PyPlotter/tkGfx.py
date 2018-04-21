@@ -1,9 +1,9 @@
 # tkGfx -    Implementation of the Gfx.Driver Interface in a 
 #    tkinter enviroment
 
-"""Implementes Gfx.Driver using tkInter. 
+"""Implements Gfx.Driver using tkInter. 
 
-Has some flaws! Specifically rotated text is not yet implemented.
+Has some flaws! Specifically rotated text is not yet implemented properly.
 """
 
 import math
@@ -22,8 +22,7 @@ except ImportError:
 try:
     from Compatibility import *
 except ImportError:
-    from . import Compatibility
-    globals().update(Compatibility.__dict__)
+    from .Compatibility import *
 
 
 driverName = "tkGfx"
@@ -54,7 +53,7 @@ class Driver(Gfx.Driver):
             if len(h) == 1: return "0"+h
             else: return h
         s = "#" + hex2str(rgbTuple[0]) + hex2str(rgbTuple[1]) + \
-                  hex2str(rgbTuple[2])
+            hex2str(rgbTuple[2])
         return s
 
     def resizedGfx(self):

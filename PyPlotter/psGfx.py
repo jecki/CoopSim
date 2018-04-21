@@ -11,8 +11,8 @@ except ImportError:
 try:
     from Compatibility import *
 except ImportError:
-    from . import Compatibility
-    globals().update(Compatibility.__dict__)
+    from .Compatibility import *
+
 
 driverName = "psGfx"
 

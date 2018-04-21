@@ -1,6 +1,7 @@
 __pycache__
 .project
 .pydevproject
+.mypy_cache
 /__bugreports/
 *~
 .settings

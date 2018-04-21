@@ -2,6 +2,6 @@
 
 __author__ = "Eckhart Arnold"
 __date__ = "December 16th 2004"
-__version__ = "$Revision 0.9.8$"
+__version__ = "$Revision 0.9.9$"
 # __credits__ = ""
 __copyright__ = "(c) 2004 MIT License"

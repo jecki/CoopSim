@@ -57,7 +57,7 @@ def OneGeneration(distribution, rounds):
     dd = distribution[1]**2 / 2
     cd = distribution[0] * distribution[1]
     
-    for i in xrange(rounds):       
+    for i in range(rounds):       
         account[0] += (2*cc*R + cd*S) / distribution[0]
         account[1] += (2*dd*P + cd*T) / distribution[1]
 
@@ -110,6 +110,6 @@ def Schuessler():
     
 
 if __name__ == "__main__":
-    print __doc__
+    print(__doc__)
     Schuessler()
 

@@ -1,10 +1,15 @@
 #!/usr/bin/python
 
 import os, re, math, gc
-import cPickle as pickle
+import pickle as pickle
 from bz2 import BZ2File
 from gzip import GzipFile
 import wx
+
+import os
+import sys
+
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from Simulation import *
 from Strategies import *
@@ -16,22 +21,7 @@ import Logging
 import gtk
 from gtk import gdk
 from PyPlotter import gtkGfx
-
-try:
-    import psyco
-    psyco.profile()
-    psyco.cannotcompile(re.compile)
-    psyco.cannotcompile(re.sub)
-    psyco.bind(PD.ReiteratedPD)
-    psyco.bind(PD.GenPayoffMatrix)    
-    psyco.bind(RichPDDeme)
-    psyco.bind(RichSuperDeme)
-    psyco.bind(Simulation.dynamics)
-    psyco.bind(Simulation.extendedDynamics)
-    psyco.bind(Graph.Cartesian)
-    psyco.bind(Gfx.nilDriver)
-except ImportError:
-    pass
+from functools import reduce
 
 BZ2_EXTENSION = ".bz2"
 GZIP_EXTENSION = ".gz"
@@ -41,7 +31,7 @@ ZIPFile = GzipFile
 ZIP_EXTENSION = GZIP_EXTENSION
 
 SAVE_IMAGE_WIDTH, SAVE_IMAGE_HEIGHT = 1280, 960
-HTML_IMAGE_WIDTH, HTML_IMAGE_HEIGHT = 640, 400 
+HTML_IMAGE_WIDTH, HTML_IMAGE_HEIGHT = 640, 400
 
 PROGRESS_DIALOG_OFF = True
 
@@ -114,18 +104,18 @@ def genAutomataDegenerators(automata, p):
     to 'Hawk' with the given probability of p.
     """
     assert p >= 0.0 and p <= 1.0, "Mutation probability p=%1.3f out "+\
-           "of range [0.0, 1.0] !"%p 
-    if p == 0.0:  return[]    
+           "of range [0.0, 1.0] !"%p
+    if p == 0.0:  return[]
     l = []; dove, hawk = -1, -1
-    for i in xrange(len(automata)):
+    for i in range(len(automata)):
         if automata[i].progString == "DDDDD":  dove = i
-        if automata[i].progString == "HHHHH":  hawk = i        
+        if automata[i].progString == "HHHHH":  hawk = i
 ##    assert dove >= 0, "automata list does not contain 'Dove'!"
 ##    assert hawk >= 0, "automata list does not contain 'Hawk'!"
     if dove < 0: dove = extList(automata, TwoStateAutomaton("DDDDD"))
     if hawk < 0: hawk = extList(automata, TwoStateAutomaton("HHHHH"))
-    for i in xrange(len(automata)):
-        a = automata[i]; c = 0  
+    for i in range(len(automata)):
+        a = automata[i]; c = 0
         for ch in a.progString:
             if ch == "D":  c += 1
         if c >= 3: d = Mutator(i, dove, p)
@@ -161,15 +151,15 @@ def genTFTDegenerators(tfts, p):
     """
 
     def xround(f):
-        """Round f, but if f = 0.5 round f randomly to 1 or 0.""" 
+        """Round f, but if f = 0.5 round f randomly to 1 or 0."""
         if f == 0.5: return round(random.random())
         else: return round(f)
 
     assert p >= 0.0 and p <= 1.0, "Mutation probability p=%1.3f out "+\
-           "of range [0.0, 1.0] !"%p 
+           "of range [0.0, 1.0] !"%p
     if p == 0.0:  return[]
     l = []; d = {}; dove, hawk, tft, inverted = -1, -1, -1, -1
-    for i in xrange(len(tfts)):
+    for i in range(len(tfts)):
         if tfts[i].goodrate == 1.0 and tfts[i].evilrate == 0.0: dove = i
         if tfts[i].goodrate == 0.0 and tfts[i].evilrate == 1.0: hawk = i
         if tfts[i].goodrate == 0.0 and tfts[i].evilrate == 0.0: tft = i
@@ -184,7 +174,7 @@ def genTFTDegenerators(tfts, p):
     if inverted < 0: inverted = extList(tfts, ParameterizedTFT(1.0, 1.0))
     d[(1., 0.)] = dove; d[(0., 1.)] = hawk
     d[(0., 0.)] = tft;  d[(1., 1.)] = inverted
-    for i in xrange(len(tfts)):
+    for i in range(len(tfts)):
         gr = xround(tfts[i].goodrate); er = xround(tfts[i].evilrate)
         l.append(Mutator(i, d[(gr,er)], p))
     return l
@@ -228,7 +218,7 @@ def altruismIndex_crude(s):
         if g >= 4:  return 2
         elif g < 2:  return 0
         elif (g == 3) and s.progString[1] == "D" \
-             and s.progString[3] == "D":  return 1 
+             and s.progString[3] == "D":  return 1
         else:
             if s.progString[:2] == "DD": return 1
             else:  return 0
@@ -241,8 +231,8 @@ def altruismIndex_crude(s):
         if isinstance(s, Tester):  return 0
         if isinstance(s, Random):  return 0
         if isinstance(s, Tranquillizer): return 0
-        if isinstance(s, Joss): return 0        
-    
+        if isinstance(s, Joss): return 0
+
 def discreteColors(s):
     """Returns one of three colors that indicate the degree of
     altruism of a strategy. Green means that the strategy is
@@ -294,7 +284,7 @@ def LeftRightOperator(valuelist):
 def LeftOperator(valuelist):
     """Picks only the leftmost value from the list. This may
     be usefull """
-    assert valuelist != [], "'valuelist' must not be empty!"    
+    assert valuelist != [], "'valuelist' must not be empty!"
     yield valuelist[0]
 
 def MonteCarloOperator(valuelist):
@@ -347,7 +337,7 @@ class SeriesDescriptor(object):
         self.demes = tuple() # (demes, minSize, maxSize, interval)
         self.mutators = tuple() # the probabilities of the degs.
         self.mutatorDicts = {} # dictionary of mutator generating functions
-        self.nameTemplate = "%s_C%1.3f_G%1.3f_N%1.3f_P%1.1f_%1.1f_%1.1f_%1.1f_M%i_%i_%i_%i_D%1.3f" 
+        self.nameTemplate = "%s_C%1.3f_G%1.3f_N%1.3f_P%1.1f_%1.1f_%1.1f_%1.1f_M%i_%i_%i_%i_D%1.3f"
         self.samples = NUM_SAMPLES
         self.state = None # state of the generator
 
@@ -406,7 +396,7 @@ class SeriesDescriptor(object):
                          gameNoise = self.gameNoise[0],
                          noise = self.noise[0],
                          iterations = 200,
-                         samples = self.samples,                         
+                         samples = self.samples,
                          payoff = self.payoff[0],
                          demes = self.demes[0],
                          mutators = deg_list)
@@ -415,7 +405,7 @@ class SeriesDescriptor(object):
     def deriveSetup(self, **kw):
         setup = self.deriveStandardSetup()
         wrongKeys = list(set(kw.keys())-set(setup.__dict__.keys()))
-        if wrongKeys != []: raise KeyError, wrongKeys
+        if wrongKeys != []: raise KeyError(wrongKeys)
         setup.__dict__.update(kw)
         ns = len(setup.strategyList)
         if len(setup.population) != ns:
@@ -437,7 +427,7 @@ class SeriesDescriptor(object):
         """Generate simulation setups from the series descriptor with
         'operator' acting as filter (or modifier respectively).
         """
-        for i in xrange(repeat):
+        for i in range(repeat):
             for s in operator(self.strategySets):
                 for c in operator(self.correlation):
                     for g in operator(self.gameNoise):
@@ -470,10 +460,10 @@ class SeriesDescriptor(object):
         value (which is assumed to be the first in the list)."""
         def genName():
             if m: x = m
-            else: x = (1,0,0,0)            
+            else: x = (1,0,0,0)
             self.state = (s,c,g,n,p[0],p[1],p[2],p[3],x[0],x[1],x[2],x[3],d)
             return self.nameTemplate % self.state
-        for i in xrange(repeat):
+        for i in range(repeat):
             s = self.strategySets[0];  c = self.correlation[0]
             g = self.gameNoise[0];     n = self.noise[0]
             p = self.payoff[0];        m = self.demes[0]
@@ -484,22 +474,22 @@ class SeriesDescriptor(object):
                 std = self.deriveStandardSetup(s)
                 for c in operator(self.correlation):
                     setup = self.deriveSetup(name = genName(), strategyList = sgl,
-                                             correlation = c, mutators = deg_list)                
+                                             correlation = c, mutators = deg_list)
                     if setup != std: yield setup
                 c = self.correlation[0]
                 for g in operator(self.gameNoise):
                     setup = self.deriveSetup(name = genName(), strategyList = sgl,
-                                             gameNoise = g, mutators = deg_list) 
+                                             gameNoise = g, mutators = deg_list)
                     if setup != std: yield setup
                 g = self.gameNoise[0]
                 for n in operator(self.noise):
                     setup = self.deriveSetup(name = genName(), strategyList = sgl,
-                                             noise = n, mutators = deg_list) 
+                                             noise = n, mutators = deg_list)
                     if setup != std: yield setup
                 n = self.noise[0]
                 for p in operator(self.payoff):
                     setup = self.deriveSetup(name = genName(), strategyList = sgl,
-                                             payoff = p, mutators = deg_list) 
+                                             payoff = p, mutators = deg_list)
                     if setup != std: yield setup
                 p = self.payoff[0]
                 for m in operator(self.demes):
@@ -510,7 +500,7 @@ class SeriesDescriptor(object):
                 for d in operator(self.mutators):
                     deg_list = self._getMutators(s, sgl,d)
                     setup = self.deriveSetup(name = genName(), strategyList = sgl,
-                                             mutators = deg_list) 
+                                             mutators = deg_list)
                     if setup != std: yield setup
                 d = self.mutators[0]
                 deg_list = self._getMutators(s, sgl,d)
@@ -524,7 +514,7 @@ def elimDoublettes(generator, emergencyExit=1000):
     features.
     (To save memory and increase speed only the names of the
     setups are compared and two setups are treated as equal
-    if they have the same name.) 
+    if they have the same name.)
     """
     previous = set(); exitCounter = 0
     for s in generator:
@@ -557,7 +547,7 @@ class TestSeries(SeriesDescriptor):
         self.mutators = (0.0,)
         for key in self.strategySets:
             self.mutatorDicts[key] = emptyMutatorGenerator #lambda sl, d: []
-            
+
 
 class BigSimulationSeries(SeriesDescriptor): # refined
     """This simulation series checks two different strategy sets
@@ -578,7 +568,7 @@ class BigSimulationSeries(SeriesDescriptor): # refined
                         (5.5, 3., 1., 0.), (5., 3., 2., 0.))
         self.demes = (None,)
         self.mutators = (0.0, 0.01, 0.05)
-        self.mutatorDicts["Automata"] = genAutomataDegenerators 
+        self.mutatorDicts["Automata"] = genAutomataDegenerators
         self.mutatorDicts["TFTs"] = genTFTDegenerators
 
 
@@ -641,11 +631,11 @@ class SubsetSeries(SeriesDescriptor):
     def generate(self, operator = NullOperator):
         return SeriesDescriptor.generate(self,
                     lambda vl: MetaOperator(operator, vl, str))
-        
+
     def genLimitedSeries(self, operator = NullOperator):
         return SeriesDescriptor.genLimitedSeries(self,
                     lambda vl: MetaOperator(operator, vl, str))
-        
+
 
 class AutomataSubsets(SubsetSeries):
     """A series of simulations with subsets of the set of
@@ -659,7 +649,7 @@ class AutomataSubsets(SubsetSeries):
         self.noise = (0.0, 0.05, 0.10, 0.15)
         self.payoff = ((5., 3., 1., 0.), (3.5, 3., 1., 0.),
                         (5.5, 3., 1., 0.), (5., 3., 2., 0.))
-        self.mutators = (0.0,)        
+        self.mutators = (0.0,)
 
 class TestAutomata(SubsetSeries):
     def __init__(self):
@@ -669,12 +659,12 @@ class TestAutomata(SubsetSeries):
         self.gameNoise = (0.0, 0.05)
         self.noise = (0.0,)
         self.payoff = ((5., 3., 1., 0.),)
-        self.mutators = (0.0,)         
+        self.mutators = (0.0,)
 
 
 ##bigsim_descriptor = BigSimulationSeries()
 ##seriesA = [stp for stp in bigsim_descriptor.genLimitedSeries()]
-        
+
 ######################################################################
 #
 # classes for generating and storing statistical information
@@ -706,24 +696,24 @@ class StrategySetStatistics(object):
         """Record the ranking to the dictionary 'ranking' accorging
         to the gained 'points'."""
         rk = [(strategies[i], points[i]) \
-              for i in xrange(len(strategies))]
+              for i in range(len(strategies))]
         rk.sort(key = lambda item: item[1], reverse = True)
-        for i in xrange(len(rk)):
+        for i in range(len(rk)):
             ranking[rk[i][0]][i] += 1
 
     def recordSim(self, sim):
         """Record the results of another simulation."""
         strategies = [str(s) for s in sim.setup.strategyList]
         l = len(strategies)
-        points = [sum(sim.payoffMatrix[i])/float(l) for i in xrange(l)]
+        points = [sum(sim.payoffMatrix[i])/float(l) for i in range(l)]
         self._rank(strategies, self.tournament_rankings, points)
         self.tournaments += 1
         self._rank(strategies, self.evolutionary_rankings,
                    sim.setup.population)
         self.evolutionarySims += 1
-        for i in xrange(len(self.strategies)):
+        for i in range(len(self.strategies)):
             s = self.strategies[i]
-            self.population_average[s] += sim.setup.population[i] 
+            self.population_average[s] += sim.setup.population[i]
         for s in self.strategies:  self.participation[s] += 1
 
     def _relativeRk(self, ranking):
@@ -737,7 +727,7 @@ class StrategySetStatistics(object):
         """Write ranking as table to file f."""
         TAB = "\t"
         f.write("Strategy" + " "*(30 - len("Strategy")) + TAB)
-        for i in xrange(len(self.strategies)): f.write(str(i+1)+TAB)
+        for i in range(len(self.strategies)): f.write(str(i+1)+TAB)
         f.write("\n\n")
         for s in self.strategies:
             f.write(s + " " * max(0, 30 - len(s)) + TAB)
@@ -765,7 +755,7 @@ class StrategySetStatistics(object):
             return 0
         s = self.strategies[:]
         s.sort(cmp, reverse = True)
-        return zip(s, range(1,len(s)+1))
+        return list(zip(s, list(range(1,len(s)+1))))
 
     def _weighted_order(self, ranking):
         """Returns a list of (stratgey, rating) pairs ranked in a
@@ -783,7 +773,7 @@ class StrategySetStatistics(object):
             return 0
         s = self.strategies[:]
         s.sort(cmp, reverse = True)
-        return zip(s, [rating[x] for x in s])
+        return list(zip(s, [rating[x] for x in s]))
 
     def _popav_order(self):
         """Returns a list of (strategy, population share) pairs ordered
@@ -796,8 +786,8 @@ class StrategySetStatistics(object):
             return 0
         s = self.strategies[:]
         s.sort(comp, reverse = True)
-        return zip(s, [self.population_average[x] / self.participation[x] \
-                       for x in s])
+        return list(zip(s, [self.population_average[x] / self.participation[x] \
+                       for x in s]))
 
     def _writeOrder(self, f, order):
         """Write list of (strategy, rating) pairs to file."""
@@ -830,7 +820,7 @@ class StrategySetStatistics(object):
             h = y2-y1+1
             strategies = [item[0] for item in order]
             if prop:
-                ratings = [item[1] for item in order]            
+                ratings = [item[1] for item in order]
                 vH = sum(ratings)
             else:
                 ratings = [1.0] * len(order)
@@ -852,7 +842,7 @@ class StrategySetStatistics(object):
                     #    s = s[:-1]
                     #    tw, th = gfx.getTextSize(s)
                     gfx.setColor(Gfx.BLACK)
-                    gfx.writeStr(x+5, int(y+h-dY-th)-3, s) 
+                    gfx.writeStr(x+5, int(y+h-dY-th)-3, s)
                     gfx.setColor(Gfx.WHITE)
                     gfx.writeStr(x+4, int(y+h-dY-th)-2, s)
                 dY += dH
@@ -870,7 +860,7 @@ class StrategySetStatistics(object):
         gdList = [None, None]
         gdList[0] = wxGfx.Driver(wx.BufferedDC(None, buf))
         gdList[1] = psGfx.Driver()
-        
+
         screenR = (0.0, 0.0, 1.0, 1.0)
         titleR = Graph.relativeRegion((0.1, 0.95, 0.9, 1.00), screenR)
         chartsR = Graph.relativeRegion((0.05, 0.00, 0.95, 0.90), screenR)
@@ -907,7 +897,7 @@ class StrategySetStatistics(object):
             bl2 = drawChart(gd, graphC, pop_order, True)
             x1 = Graph.screenRegion(gd, graphB)[2]
             x2 = Graph.screenRegion(gd, graphC)[0]
-            for i in xrange(len(bl2)):
+            for i in range(len(bl2)):
                 gd.drawLine(x1, bl1[i], x2, bl2[i])
             write(gd, "Average Final Population", capC)
 
@@ -928,7 +918,7 @@ class StrategySetStatistics(object):
         self._writeTable(f, self._relativeRk(self.evolutionary_rankings))
         f.write("Average Final Population\n\n")
         self._writeSimpleTable(f, self.population_average)
-        
+
         f.write("Tournament ranking (lexical order)\n\n")
         self._writeOrder(f, self._lexical_order(self.tournament_rankings))
         f.write("Tournament ranking (weighted order)\n\n")
@@ -942,7 +932,7 @@ class StrategySetStatistics(object):
 
         self.createCharts(fName, strategyColor)
         self.createCharts(fName, discreteColors, suffix="_scheme2")
-        
+
         f.close()
         f = ZIPFile(fName + ".pickle"+ZIP_EXTENSION, "w")
         pickle.dump(self.tournament_rankings, f, protocol=pickle.HIGHEST_PROTOCOL)
@@ -982,7 +972,7 @@ class StatisticsInterface(object):
         return d
     def __setstate__(self, d):
         self.__dict__.update(d)
-        print "Rebuilding: ", self.name, self.filterString
+        print("Rebuilding: ", self.name, self.filterString)
         self.sfilter = eval(self.filterString)
     def record(self, sim):
         """Record the information of the (finished) simulation
@@ -991,7 +981,7 @@ class StatisticsInterface(object):
 
     def write(self):
         """Save the results of the statistical analysis to the
-        hard disk."""    
+        hard disk."""
         raise NotImplementedError
 
 
@@ -1023,13 +1013,13 @@ class SeriesStatistics(StatisticsInterface):
             stats.recordSim(sim)
 
     def write(self):
-        print "Writing Statistics: "+self.name        
+        print("Writing Statistics: "+self.name)
         try:
             os.mkdir(self.name)
-        except OSError, errobj: # catch dir exists error
-            if errobj.errno != 17:  raise OSError, errobj        
+        except OSError as errobj: # catch dir exists error
+            if errobj.errno != 17:  raise OSError(errobj)
         os.chdir(self.name)
-        for key, stats in self.stgySetStats.iteritems():
+        for key, stats in self.stgySetStats.items():
             stats.writeTables(self.crossref[key])
         os.chdir("../")
 
@@ -1056,13 +1046,13 @@ class SubsetSeriesStatistics(StatisticsInterface):
             self.stats.record(sim)
 
     def write(self):
-        print "Writing Statistics: "+self.name
+        print("Writing Statistics: "+self.name)
         self.stats.writeTables(self.name)
 
 
 def CreateStatisticsObject(series, sfilter="lambda x:True", name=""):
     """Returns a suitable Statistics Interface object."""
-    print "Creating: ", name
+    print("Creating: ", name)
     if isinstance(series, SubsetSeries):
         return SubsetSeriesStatistics(series, sfilter, name)
     else: return SeriesStatistics(series, sfilter, name)
@@ -1126,9 +1116,9 @@ def checkEquilibrium(record):
     """
     rlen = len(record); N = len(record[0])
     if rlen < 50: return False
-    check = [record[i] for i in xrange(rlen*4/5, rlen, rlen/50)]
-    for i in xrange(N):
-        values = [check[v][i] for v in xrange(len(check))]
+    check = [record[i] for i in range(rlen*4/5, rlen, rlen/50)]
+    for i in range(N):
+        values = [check[v][i] for v in range(len(check))]
         a, b = min(values), max(values)
         diff = b-a
         if b > 1.0 / (100.0 * N) and diff > b/500.0: return False
@@ -1141,8 +1131,8 @@ def pickleSimulationResults(fName, sim, record):
     """
     try:
         os.mkdir("Pickles")
-    except OSError, errobj: # catch dir exists error
-        if errobj.errno != 17:  raise OSError, errobj        
+    except OSError as errobj: # catch dir exists error
+        if errobj.errno != 17:  raise OSError(errobj)
     os.chdir("Pickles")
 
     if fName[-7:] != ".pickle": fName += ".pickle"
@@ -1152,14 +1142,14 @@ def pickleSimulationResults(fName, sim, record):
     pickle.dump(sim.payoffMatrix, f, protocol = pickle.HIGHEST_PROTOCOL)
     pickle.dump(record, f, protocol = pickle.HIGHEST_PROTOCOL)
     f.close()
-    os.chdir("../")  
+    os.chdir("../")
 
 dirCache = {}
 
 def matchName(fName):
     global dirCache
     key = os.getcwd()
-    if dirCache.has_key(key):
+    if key in dirCache:
         dl = dirCache[key]
     else:
         dl = [d for d in os.listdir(key) if d.find("nav") < 0]
@@ -1180,35 +1170,35 @@ def unpickleSimulationResults(fName):
     os.chdir("Pickles")
     if not fName.endswith(".pickle"): fName += ".pickle"
     try:
-        f = file(fName, "r")         
+        f = file(fName, "r")
     except IOError:
         try:
             f = ZIPFile(fName + ZIP_EXTENSION, "r")
         except IOError:
             fName = matchName(fName)
             f = BZ2File(fName, "r")
-    print "Unpickeling: "+fName
+    print("Unpickeling: "+fName)
     strategies = pickle.load(f)
 
     # begin dirty hack
-    for k in xrange(len(strategies)):
+    for k in range(len(strategies)):
         for name in true_names:
             if strategies[k][:9] == name[:9]:
                 strategies[k] = name
                 break
     # end of dirty hack
-    
+
     PM = pickle.load(f)
     record = pickle.load(f)
     f.close()
-            
+
     if REPICKLE_RESULTS:
-        print "Repickeling: "+fName
+        print("Repickeling: "+fName)
         f = ZIPFile(fName+ZIP_EXTENSION, "w")
         pickle.dump(strategies, f, protocol = pickle.HIGHEST_PROTOCOL)
         pickle.dump(PM, f, protocol = pickle.HIGHEST_PROTOCOL)
         pickle.dump(record, f, protocol = pickle.HIGHEST_PROTOCOL)
-        f.close()        
+        f.close()
     os.chdir("../")
     return (strategies, PM, record)
 
@@ -1248,7 +1238,7 @@ class Notifier(Logging.LogNotificationInterface):
         pass
     def statusBarHint(self, hint):
         # print hint+"\r",
-        if hint != "Running..." and hint != "Ready.": print hint
+        if hint != "Running..." and hint != "Ready.": print(hint)
     def progressIndicator(self, f, title = "Please wait...",
                           message = "Determining payoff table..."):
         # print message + " [%3i%%]\r"% int(f*100),
@@ -1256,14 +1246,14 @@ class Notifier(Logging.LogNotificationInterface):
         if title != self.title:
             self.title = title
             self.progressDialog.SetTitle(title)
-        self.progressDialog.Update(min(999,int(f*1000)), message)            
+        self.progressDialog.Update(min(999,int(f*1000)), message)
 
- 
+
 class dummyStgy(Strategy):
     def __init__(self, name):
         Strategy.__init__(self)
         self.name = name
-        
+
 
 class OfflineSim(SimInterface):
     """A SimInterface that does not need the CoopSim main application
@@ -1292,11 +1282,11 @@ class OfflineSim(SimInterface):
             "Strategy 1", "Strategy 2", "Strategy 3",
              styleFlags = Simplex.VECTORS)
         self.simulation = Simulation(self.graph, self.simplex, self.htmlLog,
-                                     self.notifier)        
+                                     self.notifier)
 
     def close(self):
         pass
-        
+
     def newSetup(self, setup, maxGenerations = MAX_GENERATIONS):
         self.simSetup = setup
         self.constructObjects()
@@ -1322,9 +1312,9 @@ class OfflineSim(SimInterface):
         #print self.simulation.imgdirName
         try:
             os.mkdir(self.simulation.imgdirName)
-        except OSError, errobj: # catch dir exists error
-            # print "Writing images for "+self.simulation.imgdirName            
-            if errobj.errno != 17:  raise OSError, errobj
+        except OSError as errobj: # catch dir exists error
+            # print "Writing images for "+self.simulation.imgdirName
+            if errobj.errno != 17:  raise OSError(errobj)
         N = float(len(self.simulation.rangeStack)+1); count = 1
         msg = "Writing images for HTML page..."
         self.notifier.progressIndicator(0.0, message = msg)
@@ -1332,7 +1322,7 @@ class OfflineSim(SimInterface):
         buf2 = wx.EmptyBitmap(HTML_IMAGE_WIDTH, HTML_IMAGE_HEIGHT)
         gd = wxGfx.Driver(wx.BufferedDC(None, buf))
         gd2 = wxGfx.Driver(wx.BufferedDC(None, buf2))
-        pd = psGfx.Driver()        
+        pd = psGfx.Driver()
         bigPen = Gfx.BLACK_PEN
         smallPen = copy.copy(Gfx.BLACK_PEN); smallPen.fontSize = Gfx.SMALL
         if len(self.simSetup.strategyList) == 3:
@@ -1347,8 +1337,8 @@ class OfflineSim(SimInterface):
             f = ZIPFile(path+".eps"+ZIP_EXTENSION, "w")
             f.write(pd.getPostscript())
             f.close()
-            
-            self.notifier.progressIndicator(0.5/N, message = msg)         
+
+            self.notifier.progressIndicator(0.5/N, message = msg)
             self.simplex.changeGfx(gd2)
             self.simplex.setStyle(titlePen = smallPen)
             image = wx.ImageFromBitmap(buf2)
@@ -1357,7 +1347,7 @@ class OfflineSim(SimInterface):
             self.simplex.changeGfx(self.simplexDriver)
             self.simplex.setStyle(titlePen = bigPen)
         self.notifier.progressIndicator(1.0/N, message = msg)
-        
+
         for imgName, x1, y1, x2, y2 in self.simulation.rangeStack:
             self.graph.adjustRange(x1, y1, x2, y2)
             self.graph.changeGfx(gd)
@@ -1366,13 +1356,13 @@ class OfflineSim(SimInterface):
             path = self.simulation.imgdirName + "/" + imgName
             image.SaveFile(path+".png", wx.BITMAP_TYPE_PNG)
             image.Destroy()
-            
+
             pd.clear();  self.graph.changeGfx(pd)
             #pd.save(path+".eps")
             f = ZIPFile(path+".eps"+ZIP_EXTENSION, "w")
             f.write(pd.getPostscript())
             f.close()
-            
+
             self.notifier.progressIndicator((count+0.5)/N, message = msg)
             self.graph.changeGfx(gd2)
             self.graph.setStyle(titlePen = smallPen)
@@ -1388,8 +1378,8 @@ class OfflineSim(SimInterface):
     def gtk_dumpHTMLImages(self, w = SAVE_IMAGE_WIDTH, h = SAVE_IMAGE_HEIGHT):
         try:
             os.mkdir(self.simulation.imgdirName)
-        except OSError, errobj: # catch dir exists error
-            if errobj.errno != 17:  raise OSError, errobj
+        except OSError as errobj: # catch dir exists error
+            if errobj.errno != 17:  raise OSError(errobj)
         N = float(len(self.simulation.rangeStack)+1); count = 1
         msg = "Writing images for HTML page..."
         self.notifier.progressIndicator(0.0, message = msg)
@@ -1403,7 +1393,7 @@ class OfflineSim(SimInterface):
         gd.changeDrawable(pm)
         gd2 = gtkGfx.Driver(cv2, cv2.create_pango_layout(""))
         gd2.changeDrawable(pm2)
-        pd = psGfx.Driver()        
+        pd = psGfx.Driver()
         bigPen = Gfx.BLACK_PEN
         smallPen = copy.copy(Gfx.BLACK_PEN); smallPen.fontSize = Gfx.SMALL
         if len(self.simSetup.strategyList) == 3:
@@ -1418,17 +1408,17 @@ class OfflineSim(SimInterface):
             f = ZIPFile(path+".eps"+ZIP_EXTENSION, "w")
             f.write(pd.getPostscript())
             f.close()
-            
-            self.notifier.progressIndicator(0.5/N, message = msg)         
+
+            self.notifier.progressIndicator(0.5/N, message = msg)
             self.simplex.changeGfx(gd2)
             self.simplex.setStyle(titlePen = smallPen)
             pw,ph = pm2.get_size()
-            buf2.get_from_drawable(pm2, pm2.get_colormap(), 0,0,0,0, pw, ph)            
+            buf2.get_from_drawable(pm2, pm2.get_colormap(), 0,0,0,0, pw, ph)
             buf2.save(path+"_web.png", "png")
             self.simplex.changeGfx(self.simplexDriver)
             self.simplex.setStyle(titlePen = bigPen)
         self.notifier.progressIndicator(1.0/N, message = msg)
-        
+
         for imgName, x1, y1, x2, y2 in self.simulation.rangeStack:
             self.graph.adjustRange(x1, y1, x2, y2)
             self.graph.changeGfx(gd)
@@ -1437,45 +1427,45 @@ class OfflineSim(SimInterface):
             pw,ph = pm.get_size()
             buf.get_from_drawable(pm, pm.get_colormap(), 0,0,0,0, pw, ph)
             buf.save(path+".png", "png")
-            
+
             pd.clear();  self.graph.changeGfx(pd)
             #pd.save(path+".eps")
             f = ZIPFile(path+".eps"+ZIP_EXTENSION, "w")
             f.write(pd.getPostscript())
             f.close()
-            
+
             self.notifier.progressIndicator((count+0.5)/N, message = msg)
             self.graph.changeGfx(gd2)
             self.graph.setStyle(titlePen = smallPen)
             pw,ph = pm2.get_size()
-            buf2.get_from_drawable(pm2, pm2.get_colormap(), 0,0,0,0, pw, ph)             
+            buf2.get_from_drawable(pm2, pm2.get_colormap(), 0,0,0,0, pw, ph)
             buf2.save(path+"_web.png", "png")
             count += 1
             self.notifier.progressIndicator(count/N, message = msg)
         self.graph.changeGfx(self.graphDriver)
         self.graph.setStyle(titlePen = bigPen)
-        self.notifier.progressIndicator(1.0, message = msg)        
+        self.notifier.progressIndicator(1.0, message = msg)
 
     dumpHTMLImages = wx_dumpHTMLImages
 
     def dumpEPSImagesOnly(self):
         try:
             os.mkdir(self.simulation.imgdirName)
-        except OSError, errobj: # catch dir exists error
-            if errobj.errno != 17:  raise OSError, errobj
+        except OSError as errobj: # catch dir exists error
+            if errobj.errno != 17:  raise OSError(errobj)
         N = float(len(self.simulation.rangeStack)+1); count = 1
         msg = "Writing EPS images ..."
         self.notifier.progressIndicator(0.0, message = msg)
-        pd = psGfx.Driver()        
+        pd = psGfx.Driver()
         if len(self.simSetup.strategyList) == 3:
-            path = self.simulation.imgdirName+"/"+self.simulation.simplexName            
+            path = self.simulation.imgdirName+"/"+self.simulation.simplexName
             pd.clear();  self.simplex.changeGfx(pd)
             #pd.save(path+".eps")
             f = ZIPFile(path+".eps"+ZIP_EXTENSION, "w")
             f.write(pd.getPostscript())
             f.close()
             self.simplex.changeGfx(self.simplexDriver)
-        self.notifier.progressIndicator(1.0/N, message = msg)        
+        self.notifier.progressIndicator(1.0/N, message = msg)
         for imgName, x1, y1, x2, y2 in self.simulation.rangeStack:
             self.graph.adjustRange(x1, y1, x2, y2)
             path = self.simulation.imgdirName + "/" + imgName
@@ -1487,7 +1477,7 @@ class OfflineSim(SimInterface):
             count += 1
             self.notifier.progressIndicator(count/N, message = msg)
         self.graph.changeGfx(self.graphDriver)
-        self.notifier.progressIndicator(1.0, message = msg)        
+        self.notifier.progressIndicator(1.0, message = msg)
 
     def writeResults(self, prefix=""):
         self.dumpHTMLImages()
@@ -1503,7 +1493,8 @@ class OfflineSim(SimInterface):
             gc.collect()
             pickleSimulationResults(fName, self.simulation,
                                     self.record)
-        except IOError,(errno, strerr):
+        except IOError as xxx_todo_changeme1:
+            (errno, strerr) = xxx_todo_changeme1.args
             self.log("IOError %i,%s while trying to save %s.html" % \
                      (errno, strerr, fName))
 
@@ -1516,13 +1507,13 @@ class OfflineSim(SimInterface):
         self.simSetup.name = self.simSetup.fname() # avoid buggy headings
         strategies, PM, record = unpickleSimulationResults(fName)
         self.simSetup.cachedPM = PM
-        
+
         #if len(self.simSetup.strategyList) != len(strategies):
         dummyStgies = [dummyStgy(s) for s in strategies]
         self.simSetup.strategyList = dummyStgies # really dirty hack!!!
-        
+
         lg = Logging.HTMLLog() #dummy
-        for et in ["evranking","toc","title"]: lg.entryPoint(et)        
+        for et in ["evranking","toc","title"]: lg.entryPoint(et)
         self.simSetup.cachedLog = lg.backup()
         self.newSetup(self.simSetup, self.notifier.progressIndicator)
         #for s in self.simulation.setup.strategyList: print s,
@@ -1537,9 +1528,9 @@ class OfflineSim(SimInterface):
             self.record.insert(0, Dynamics.UniformDistribution(len(strategies)))
             if (not REDO_AUTOMATA_ONLY) or \
                self.simulation.imgdirName.find("Automat") > -1:
-                for i in xrange(len(self.record)):
+                for i in range(len(self.record)):
                     p = self.record[i]
-                    for k in xrange(len(strategies)):
+                    for k in range(len(strategies)):
                         of.addValue(strategies[k],i,p[k])
                     if i == generations[0]:
                         imgName = fName[7:-5] + "_gn%i" % i
@@ -1552,15 +1543,15 @@ class OfflineSim(SimInterface):
 
     def fixIndex(self, setup, prefix=""):
         if prefix: fName = prefix
-        else: fName = setup.fname()        
+        else: fName = setup.fname()
         pageName = fName + ".html"
         self.summaryPage.append('<a href="'+pageName+'">'+fName+\
-                                    '</a><br />')        
-        
+                                    '</a><br />')
+
     def log(self, str):
         self.logstr.append(str)
-        print str
-        
+        print(str)
+
     def dumpLog(self):
         self.summaryPage.append("</body></html>\n")
         try:
@@ -1570,9 +1561,10 @@ class OfflineSim(SimInterface):
             f = file("index.html", "w")
             f.write("".join(self.summaryPage))
             f.close()
-        except IOError, (errno, strerr):
-            print "IOError %i,%s while trying to save"+\
-                  "LOG.TXT and summary page" % (errno, strerr)
+        except IOError as xxx_todo_changeme2:
+            (errno, strerr) = xxx_todo_changeme2.args
+            print("IOError %i,%s while trying to save"+\
+                  "LOG.TXT and summary page" % (errno, strerr))
 
 
 fnDir = []
@@ -1586,7 +1578,7 @@ def fixName(fName):
         fnDir.sort()
     i = int(fName[0:6]) - 1
     if fnDir[i] != fName:
-        print "fixing name: "+fnDir[i]
+        print("fixing name: "+fnDir[i])
         os.rename(fnDir[i], fName)
 
 class SeriesRunner(object):
@@ -1614,14 +1606,14 @@ class SeriesRunner(object):
         else:
             self.dir = directory + self.series.name
         try: os.mkdir(self.dir)
-        except OSError, errobj: # catch dir exists error
-            if errobj.errno != 17:  raise OSError, errobj
+        except OSError as errobj: # catch dir exists error
+            if errobj.errno != 17:  raise OSError(errobj)
 
     def _prepareStatistics(self):
         if self.operator == MonteCarloOperator:
             self.statistics = [SeriesStatistics(self.series)]
         else:
-            self.statistics = SpawnStatisticsObjects(self.series)        
+            self.statistics = SpawnStatisticsObjects(self.series)
 
     def writeCounter(self, counter):
         """Write the state of the simulation counter to disk, to be
@@ -1639,21 +1631,24 @@ class SeriesRunner(object):
             pickle.dump(PD.cache, f, pickle.HIGHEST_PROTOCOL)
             pickle.dump(PD.outsourced_match_logs, f, pickle.HIGHEST_PROTOCOL)
             pickle.dump(PD.outsourced_last_name, f, pickle.HIGHEST_PROTOCOL)
-                
+
             f.close()
-        except IOError, (errno, strerr):
-            print "IOError %i,%s while trying to save COUNTER.TXT" % \
-                     (errno, strerr)
+        except IOError as xxx_todo_changeme3:
+            (errno, strerr) = xxx_todo_changeme3.args
+            print("IOError %i,%s while trying to save COUNTER.TXT" % \
+                     (errno, strerr))
         try:
             os.remove("STATE.PICKLE")
             #print os.listdir("")
-        except OSError, (errno, strerr):
-            print "IOError %i, %s may be ignored"%(errno, strerr)
-            print os.getcwd()
+        except OSError as xxx_todo_changeme4:
+            (errno, strerr) = xxx_todo_changeme4.args
+            print("IOError %i, %s may be ignored"%(errno, strerr))
+            print(os.getcwd())
         try:
             os.rename("STATE.PICKLE_NEW", "STATE.PICKLE")
-        except OSError, (errno, strerr):
-            print "IOError %i, %s"%(errno, strerr)            
+        except OSError as xxx_todo_changeme5:
+            (errno, strerr) = xxx_todo_changeme5.args
+            print("IOError %i, %s"%(errno, strerr))
 
     def readCounter(self):
         """-> counter"""
@@ -1661,14 +1656,15 @@ class SeriesRunner(object):
             f = file("COUNTER.TXT", "r")
             counter = int(f.read())+1
             f.close()
-        except IOError, (errno, strerr):
+        except IOError as xxx_todo_changeme6:
+            (errno, strerr) = xxx_todo_changeme6.args
             if errno != 2:
-                print "IOError %i,%s while trying to read COUNTER.TXT" % \
-                      (errno, strerr)
+                print("IOError %i,%s while trying to read COUNTER.TXT" % \
+                      (errno, strerr))
             counter = 1
             self._prepareStatistics()
         except ValueError:
-            print "ValueError!? Resuming simulation series from the beginning!"
+            print("ValueError!? Resuming simulation series from the beginning!")
             counter = 1
             self._prepareStatistics()
         try:
@@ -1683,17 +1679,18 @@ class SeriesRunner(object):
             PD.cache = pickle.load(f)
             PD.outsourced_match_logs = pickle.load(f)
             PD.outsourced_last_name = pickle.load(f)
-            
+
             f.close()
-        except IOError, (errno, strerr):
+        except IOError as xxx_todo_changeme7:
+            (errno, strerr) = xxx_todo_changeme7.args
             if counter != 1:
-                print "IOError %i,%s while trying to recover simulation state"%(errno, strerr)
-                print "Restarting simulation series"
+                print("IOError %i,%s while trying to recover simulation state"%(errno, strerr))
+                print("Restarting simulation series")
             counter = 1
             self._prepareStatistics()
         except EOFError:
-            print "EOFError while trying to recover simulation state"
-            print "Restarting simulation series"
+            print("EOFError while trying to recover simulation state")
+            print("Restarting simulation series")
             counter = 1
             self._prepareStatistics()
         return counter
@@ -1720,7 +1717,7 @@ class SeriesRunner(object):
                 self.sim.log("Running simulation series %s. %i simulations to go."%\
                              (self.series.name,
                               self.series.numberOfSimulations(self.operator)))
-            
+
         os.chdir(cwd)
         if self.operator == MonteCarloOperator or \
            self.operator == DiscreteMCOperator:
@@ -1736,8 +1733,8 @@ class SeriesRunner(object):
         else:  PD.MATCH_LOG_OUTSOURCED = True
         counter = 0
         for setup in self.generator(self.operator, repeat):
-            counter += 1;           
-            prefix = ("%6i_"%counter).replace(" ","0") + setup.fname()            
+            counter += 1;
+            prefix = ("%6i_"%counter).replace(" ","0") + setup.fname()
             if counter < resume_from:
                 self.sim.fixIndex(setup, prefix)
                 continue
@@ -1753,7 +1750,7 @@ class SeriesRunner(object):
                 elif REDO_IMAGES:
                     if REDO_AUTOMATA_ONLY:
                         if self.sim.simulation.imgdirName.find("Automat") > -1:
-			    print "writing images for", setup.name
+			    print("writing images for", setup.name)
                             self.sim.dumpHTMLImages()
                     else: self.sim.dumpEPSImagesOnly()
                 os.chdir(cwd)
@@ -1770,7 +1767,7 @@ class SeriesRunner(object):
                 os.chdir(cwd)
             gc.collect()
         os.chdir(self.dir)
-        if replay: self.writeCounter(counter)        
+        if replay: self.writeCounter(counter)
         for s in self.statistics: s.write()
         if not replay: self.writeMatchLogs()
         PD.MATCH_LOG_OUTSOURCED = save_MLO
@@ -1783,12 +1780,12 @@ class SeriesRunner(object):
         if not PD.MATCH_LOG_OUTSOURCED: return
         try:
             os.mkdir(PD.MATCH_LOG_DIRECTORY)
-        except OSError, errobj: # catch dir exists error
-            if errobj.errno != 17:  raise OSError, errobj        
+        except OSError as errobj: # catch dir exists error
+            if errobj.errno != 17:  raise OSError(errobj)
         for matchlog, filename in PD.outsourced_pages():
             f = file(filename, "w")
             f.write("".join(matchlog))
-            f.close()              
+            f.close()
 
     def createNavigationPages(self):
         """Creates html pages that help navigating through the results
@@ -1802,22 +1799,22 @@ class SeriesRunner(object):
             n = m - m % modulo[k]
             return i - n
         cwd = os.getcwd()
-        os.chdir(self.dir)        
+        os.chdir(self.dir)
         link_tmpl = """<a href="%s.html" target="content" onclick="switchnav('%s_nav.html')">"""
         pl = self.series.getParameterList(self.operator)
         pn = self.series.getParameterNames()
         variations = self.series.parameterVariations(self.operator)
         modulo = tuple([mul(variations[i+1:]) for i in range(len(variations))])
-        for i in xrange(len(self.names)):
+        for i in range(len(self.names)):
             page = ["<html>\n<head>\n"]
             page.append(FRAME_SCRIPT)
             page.append("</head>\n<body>\n")
-            for k in xrange(len(pn)):
+            for k in range(len(pn)):
                 page.append("<i>"+pn[k]+":</i> ")
                 pos = decompose(i,k)  # i % modulo[k] ???
-                for c in xrange(variations[k]):
+                for c in range(variations[k]):
                     idx = c * modulo[k] + pos
-                    #if k==0: print idx, i                    
+                    #if k==0: print idx, i
                     par = str(pl[k][c])
                     if idx == i:
                         page.append("<b>"+par+"</b>&nbsp;&nbsp;&nbsp;")
@@ -1831,18 +1828,20 @@ class SeriesRunner(object):
                 f = file(self.names[i]+"_nav.html", "w")
                 f.write("".join(page))
                 f.close()
-            except IOError, (errno, errstr):
-                print "IOError %i,%s while trying to create navigation pages"%(errno, strerr)
+            except IOError as xxx_todo_changeme:
+                (errno, errstr) = xxx_todo_changeme.args
+                print("IOError %i,%s while trying to create navigation pages"%(errno, strerr))
         try:
             f = file("index_frames.html", "w")
             f.write(FRAME_SET.replace("$NAV", self.names[0]+"_nav.html").\
                     replace("$CONT", self.names[0]+".html"))
             f.close()
-        except IOError, (errno, errstr):
-            print "IOError %i,%s while trying to navigation index"%(errno, strerr)
+        except IOError as xxx_todo_changeme8:
+            (errno, errstr) = xxx_todo_changeme8.args
+            print("IOError %i,%s while trying to navigation index"%(errno, strerr))
         os.chdir(cwd)
 
-                    
+
 ######################################################################
 #
 # Simulation Code
@@ -1861,7 +1860,7 @@ def big_series():
     series.name = "BigSeries"
     siminterface = OfflineSim()
     runner = SeriesRunner(siminterface, series, limited = False)
-    runner.resume(replay = REPLAY)     
+    runner.resume(replay = REPLAY)
     runner.createNavigationPages()
 
 def border_condition_series():
@@ -1871,7 +1870,7 @@ def border_condition_series():
     runner = SeriesRunner(siminterface, series,
                           operator = LeftRightOperator,
                           limited = False)
-    runner.resume(replay=REPLAY)     
+    runner.resume(replay=REPLAY)
     runner.createNavigationPages()
 
 def monte_carlo_series():
@@ -1881,7 +1880,7 @@ def monte_carlo_series():
     runner = SeriesRunner(siminterface, series,
                           operator = MonteCarloOperator,
                           limited = False)
-    runner.resume(replay=REPLAY)     
+    runner.resume(replay=REPLAY)
     # runner.createNavigationPages()
 
 def discrete_monte_carlo_series():
@@ -1891,8 +1890,8 @@ def discrete_monte_carlo_series():
     runner = SeriesRunner(siminterface, series,
                           operator = DiscreteMCOperator,
                           limited = False)
-    runner.resume(replay=REPLAY)     
-    # runner.createNavigationPages()     
+    runner.resume(replay=REPLAY)
+    # runner.createNavigationPages()
 
 
 ######################################################################
@@ -1902,7 +1901,7 @@ def alternative_series():
     series.name = "AlternativeSeries"
     siminterface = OfflineSim()
     runner = SeriesRunner(siminterface, series, limited = False)
-    runner.resume(replay=REPLAY)     
+    runner.resume(replay=REPLAY)
     runner.createNavigationPages()
 
 def alternative_series_with_demes():
@@ -1911,8 +1910,8 @@ def alternative_series_with_demes():
     series.demes = ((50,3,7,5),)
     siminterface = OfflineSim()
     runner = SeriesRunner(siminterface, series, limited = False)
-    runner.resume(replay=REPLAY)     
-    runner.createNavigationPages()    
+    runner.resume(replay=REPLAY)
+    runner.createNavigationPages()
 
 
 ######################################################################
@@ -1938,15 +1937,15 @@ def automata_test():
 if __name__ == "__main__":
     #automata_test(None)
     #limited_series()
-    
+
 #    MainWindow = wxGfx.Window(title="CoopSim - Simulation Series")
     myApp = wx.PySimpleApp()
     MainWindow = wx.ProgressDialog("CoopSim - Simulation Series",
                                    "Please Wait (very long...)", 1000)
 #    system_test()
-    
+
     # set 1
-    
+
 #    limited_series()
 #    big_series()
 #    border_condition_series()
@@ -1957,5 +1956,5 @@ if __name__ == "__main__":
 
 #    alternative_series()
 #    alternative_series_with_demes()
-    
+
     MainWindow.Destroy()

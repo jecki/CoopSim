@@ -6,8 +6,9 @@ function.
 """
 
 import random, warnings
-from Compatibility import *
+from .Compatibility import *
 from decimal import *
+from functools import reduce
 
 #-------------------------------------------------------------------------------
 #
@@ -58,7 +59,7 @@ class GenTuples(object):
         """Returns the i-th tuple in line."""
         if i >= self.stop:  raise IndexError
         l = []
-        for x in xrange(self.dimension):
+        for x in range(self.dimension):
             n = i % self.count
             l.insert(0, n)
             i /= self.count
@@ -143,11 +144,11 @@ def UniformDistribution(n, noise=0.0):
                    "must at least be 0, not %i !" % n
     if n == 0: return ()
     if noise < 0.0 or noise > 1.0:
-        raise ValueError, "noise = %f, must be 0.0 <= noise <= 1.0" % noise
+        raise ValueError("noise = %f, must be 0.0 <= noise <= 1.0" % noise)
     r = 1.0/n;  rn = r*(1.0-noise)
-    p = [random.uniform(rn, r) for i in xrange(n)]
+    p = [random.uniform(rn, r) for i in range(n)]
     N = sum(p)
-    for i in xrange(n):  p[i] /= N
+    for i in range(n):  p[i] /= N
 
 ##    Alternative noise model
 ##
@@ -176,7 +177,7 @@ def RandomSelect(distribution):
         else: return rselect(slices, r, a, m)
 
     if distribution == []:
-        raise ValueError, "Cannot select an element from an empty distribution"
+        raise ValueError("Cannot select an element from an empty distribution")
     slices = [0.0]
     for p in distribution:  slices.append(p+slices[-1])
     return rselect(slices, random.random(), 0, len(slices))
@@ -195,9 +196,9 @@ def _Fitness2(population, payoff, e):
     L = len(n)
     Sn = sum(n)
     p = []    
-    for i in xrange(L):
+    for i in range(L):
         s = Decimal(repr(0.0))
-        for k in xrange(L):
+        for k in range(L):
             if i == k:
                 s += payoff[i,k]*(n[i]+e*(Sn-n[i]))
             else: 
@@ -216,13 +217,13 @@ def _SampledFitness2(population, payoff, e, samples):
 #        samples = int(samples*L*L+0.5)
     Sn = sum(n)
     p = []
-    for i in xrange(L):
+    for i in range(L):
         m = []
-        for k in xrange(L):
+        for k in range(L):
             if i == k:  m.append(n[i]+e*(Sn-n[i]))
             else: m.append(n[k]-e*n[k])
         s = 0.0
-        for k in xrange(samples):
+        for k in range(samples):
             s += payoff[i, RandomSelect(m)]
         p.append(s/samples)
     return p    
@@ -234,9 +235,9 @@ def _QuickFitness2(population, payoff):
     n = population
     L = len(n)
     p = []
-    for i in xrange(L):
+    for i in range(L):
         s = 0.0
-        for k in xrange(L):
+        for k in range(L):
             s += payoff[i,k]*n[k]
         p.append(s)
     return p
@@ -249,9 +250,9 @@ def _SampledQuickFitness2(population, payoff, samples):
     n = population
     L = len(n)
     p = []
-    for i in xrange(L):
+    for i in range(L):
         s = 0.0
-        for k in xrange(samples):
+        for k in range(samples):
             s += payoff[i, RandomSelect(n)]
         p.append(s/samples)
     return p
@@ -263,10 +264,10 @@ def _QuickFitness(population, payoff, N):
     n = population
     L = len(n)
     p = []
-    for i in xrange(L):
+    for i in range(L):
         s = 0.0
         for k in GenTuples(N-1, L):
-            s += payoff[(i,)+k] * reduce(lambda x,y:x*y, map(lambda x:n[x],k))
+            s += payoff[(i,)+k] * reduce(lambda x,y:x*y, [n[x] for x in k])
         p.append(s)
     return p
 
@@ -278,10 +279,10 @@ def _SampledQuickFitness(population, payoff, N, samples):
     n = population
     L = len(n)
     p = []
-    for i in xrange(L):
+    for i in range(L):
         s = 0.0
-        for k in xrange(samples):
-            t = tuple([i]+[RandomSelect(n) for v in xrange(N-1)])
+        for k in range(samples):
+            t = tuple([i]+[RandomSelect(n) for v in range(N-1)])
             s += payoff[t]
         p.append(s/samples)
     return p
@@ -292,16 +293,16 @@ def _Fitness(population, payoff, e, N):
     L = len(n)
     p = []
     I = set(range(L))
-    for i in xrange(L):
+    for i in range(L):
         s = 0.0
         for k in GenTuples(N-1, L):
             K = set(k)
-            Sn = sum(map(lambda y:n[y],filter(lambda x: x != i, I-K)))
+            Sn = sum([n[y] for y in [x for x in I-K if x != i]])
             d = {}
             for r in K:
                 if r == i:  d[r] = n[r] + e*Sn
                 else:       d[r] = n[r] - e*n[r]            
-            s += payoff[(i,)+k] * reduce(lambda x,y:x*y, map(lambda x:d[x],k))
+            s += payoff[(i,)+k] * reduce(lambda x,y:x*y, [d[x] for x in k])
         p.append(s)
     return p
 
@@ -314,14 +315,14 @@ def _SampledFitness(population, payoff, e, N, samples):
     L = len(n)
     Sn = sum(n)    
     p = []
-    for i in xrange(L):
+    for i in range(L):
         s = 0.0
         m = []
-        for k in xrange(L):
+        for k in range(L):
             if i == k:  m.append(n[i]+e*(Sn-n[i]))
             else: m.append(n[k]-e*n[k])        
-        for k in xrange(samples):
-            t = tuple([i]+[RandomSelect(m) for v in xrange(N-1)])
+        for k in range(samples):
+            t = tuple([i]+[RandomSelect(m) for v in range(N-1)])
             s += payoff[t]
         p.append(s/samples)
     return p    
@@ -376,8 +377,8 @@ class GenFitnessFunction(object):
         self.payoff, self.e, self.N, self.samples = payoff, e, N, samples
 
         if isinstance(e, 0.0.__class__) and (e < 0.0 or e > 1.0):
-            raise ValueError, "e = %f violates 0.0 <= e <= 1.0"%e
-        if samples <= 0: raise ValueError, "samples %f <= 0 !"%samples
+            raise ValueError("e = %f violates 0.0 <= e <= 1.0"%e)
+        if samples <= 0: raise ValueError("samples %f <= 0 !"%samples)
 
         if N == 1:
             if isinstance(e, 0.0.__class__) and (e != 0.0):
@@ -402,7 +403,7 @@ class GenFitnessFunction(object):
                 self.stdFunction = _Fitness
                 self.params = (payoff, e, N)
                 self.sampleFunction = _SampledFitness
-        else: raise ValueError, "N must be >= 1, not %i !" % N
+        else: raise ValueError("N must be >= 1, not %i !" % N)
         if samples != 1.0 and N > 1:
             self.function = _FunctionSelector
             self.baseParams = self.params
@@ -426,14 +427,14 @@ def _Replicator(population, fitness, noise):
     L = len(population)
     f = fitness(population)
     
-    for i in xrange(L):  n[i] *= f[i]- Decimal(repr(random.uniform(0,float(f[i]*noise))))
+    for i in range(L):  n[i] *= f[i]- Decimal(repr(random.uniform(0,float(f[i]*noise))))
     N = sum(n)
     if N == 0.0: # <- this should never be true, except for precision errors!
         n = list(population)
-        for i in xrange(L):  n[i] *= 1.0 - random.uniform(0, noise)
+        for i in range(L):  n[i] *= 1.0 - random.uniform(0, noise)
         N = sum(n)
         if N == 0.0: return population
-    for i in xrange(L): n[i] /= N
+    for i in range(L): n[i] /= N
 
 ##    Alternative noise model:
 ##
@@ -455,10 +456,10 @@ def _QuickReplicator(population, fitness):
     n = list(population)
     L = len(population)
     f = fitness(population)
-    for i in xrange(L): n[i] *= f[i]
+    for i in range(L): n[i] *= f[i]
     N = sum(n)
     if N == 0.0: return population
-    for i in xrange(L): n[i] /= N
+    for i in range(L): n[i] /= N
     return tuple(n)
 
 
@@ -500,7 +501,7 @@ class GenDynamicsFunction(object):
             return value - the same.
     """
         if isinstance(noise, 0.0.__class__) and (noise < 0.0 or noise > 1.0):
-            raise ValueError,"noise = %f violates 0.0 <= noise <= 1.0"%noise
+            raise ValueError("noise = %f violates 0.0 <= noise <= 1.0"%noise)
         self.fitness = GenFitnessFunction(payoff, e, N, samples)
         if noise == 0.0:
             self.function = _QuickReplicator
@@ -523,7 +524,7 @@ class GenDynamicsFunction(object):
 
 
 if __name__ == "__main__":
-    import systemTest
+    from . import systemTest
     systemTest.DynamicsTest()
     
 

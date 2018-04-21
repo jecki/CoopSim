@@ -328,8 +328,7 @@ class Tester(Strategy):
         elif self.state == "TitForTat":
             return opMoves[-1]
         else:
-            raise AssertionError, \
-                  "Tester: state %s is not a valid state!"%self.state
+            raise AssertionError("Tester: state %s is not a valid state!"%self.state)
 tester = Tester()
 
 
@@ -853,8 +852,7 @@ class Absurdistan1(Strategy):
                 self.state = "Phase 1"
                 return 1
             else:  return 0
-        else:  raise AssertionError, \
-                     "Absurdistan1: self.state = %s not valid"%self.state
+        else:  raise AssertionError("Absurdistan1: self.state = %s not valid"%self.state)
 # absurdistan = Absurdistan1()
 
 
@@ -960,7 +958,7 @@ class ContriteTFT(Strategy):
     def firstMove(self):
         self.state = "content"
         return 1
-    
+
     def nextMove(self, myMoves, opMoves):
         if self.state == "content":
             if opMoves[-1] == 0:
@@ -986,7 +984,7 @@ class ContriteTFT(Strategy):
             else:
                 return 1
 
-        else: 
+        else:
             raise AssertionError  # because this point should never be reached
 contriteTFT = ContriteTFT()
 
@@ -1177,6 +1175,6 @@ def genParameterizedTFTs(grFrom, grTo, grStep,
 def genEndGameCheaters(r1, r2):
     """Generate all EndGameCheaters that start cheating from round r1 to r2,
     counted from the last round."""
-    return [EndGameCheater(r) for r in xrange(r1, r2+1)]
+    return [EndGameCheater(r) for r in range(r1, r2+1)]
 
 

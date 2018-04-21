@@ -1,5 +1,4 @@
 import copy, random
-from Compatibility import *
 
 
 class array(object):
@@ -16,13 +15,16 @@ class array(object):
     """
 
     def __str__(self):
-        if self.obj != None:  return str(self.obj)
-        else: return "Cannot convert wrapped function to string!"
+        if self.obj is not None:
+            return str(self.obj)
+        else:
+            return "Cannot convert wrapped function to string!"
 
     def __len__(self):
-        assert self.obj != None, "Length of wrapped function is not defined!"
+        assert self.obj is not None, \
+            "Length of wrapped function is not defined!"
         return len(self.obj)
-    
+
     def __init__(self, obj, *etc):
         """obj - function or tuple of list
         """
@@ -34,43 +36,47 @@ class array(object):
             self.obj = list(obj)
             self.dimensions = []
             l = self.obj
-            while type(l) == type([]):
+            while isinstance(l, list):
                 self.dimensions.append(len(l))
-                assert l != [], "Empty lists or lists with empty lists "+\
+                assert l != [], "Empty lists or lists with empty lists " + \
                                 "as elements cannot be wrapped!"
-##                for i in xrange(len(l)):
-##                    if isinstance(l[i], array):  l[i] = list(l[i])
+                # for i in xrange(len(l)):
+                #    if isinstance(l[i], array):  l[i] = list(l[i])
                 l = l[0]
             self.function = self.__listwrapper
         else:
-            raise TypeError, "ArrayWrapper only supports callables, lists "+\
-                             "or tuples, but not %s!" % type(obj)
+            raise TypeError("ArrayWrapper only supports callables, lists " + \
+                             "or tuples, but not %s!" % type(obj))
         self.__op = None
-                             
+
     def __listwrapper(self, *key):
         value = self.obj
-        for i in key:  value = value[i]
+        for i in key:
+            value = value[i]
         return value
-        
+
     def __getitem__(self, key):
-        if type(key) == type(1): return self.function(key)
-        else: return self.function(*key)
+        if isinstance(key, int):
+            return self.function(key)
+        else:
+            return self.function(*key)
 
     def __setitem__(self, key, value):
-        if self.obj != None:
-            if type(key) == type(1):
+        if self.obj is not None:
+            if isinstance(key, int):
                 self.obj[key] = value
             else:
                 ref = self.obj
-                for i in key[:-1]:  ref = ref[i]
+                for i in key[:-1]:
+                    ref = ref[i]
                 ref[key[-1]] = value
         else:
-            raise TypeError,"wrapped functions do not support item assignement"
+            raise TypeError("wrapped functions do not support item assignement")
 
     def __getstate__(self):
         if self.function != self.__listwrapper:
-            raise TypeError, "Can't prepare an Array Wrapper "\
-                             "of a function for pickling!"
+            raise TypeError("Can't prepare an Array Wrapper " +
+                            "of a function for pickling!")
         else:
             dct = self.__dict__.copy()
             dct["function"] = None
@@ -78,15 +84,17 @@ class array(object):
 
     def __setstate__(self, dict):
         self.__dict__.update(dict)
-        self.function = self.__listwrapper        
+        self.function = self.__listwrapper
 
     def __operation(self, l1, l2):
-        if type(l1) == type([]):
-            if type(l2) == type([]):
-                return [self.__operation(x1,x2) for (x1,x2) in zip(l1,l2)]
+        if isinstance(l1, list):
+            if isinstance(l2, list):
+                return [self.__operation(x1, x2) for (x1, x2) in zip(l1, l2)]
             else:
-                return [self.__operation(x,l2) for x in l1]
-        else:  return self.__op(l1,l2)
+                return [self.__operation(x, l2) for x in l1]
+        else:
+            return self.__op(l1, l2)
+
     def __arithmetic(self, other, op):
         self.__op = op
         if isinstance(other, array):
@@ -96,59 +104,81 @@ class array(object):
                 "Cannot multiply arrays with different dimensions: %s and %s"\
                 % (str(self.dimensions),str(other.dimensions))
             return array(self.__operation(self.obj, other.obj))
-        else:  return array(self.__operation(self.obj, other))
+        else:
+            return array(self.__operation(self.obj, other))
 
     def __mul__(self, other):
         """Multiply array item for item with another array of the same
         dimensions or with a scalar. This is not a matrix multiplication.
-        For matrix multiplication use function 'matrixmultiply' or
-        'dot' instead.
+        For matrix multiplication use function 'dot' instead.
         """
-        return self.__arithmetic(other, lambda x,y:x*y)
+        return self.__arithmetic(other, lambda x, y: x * y)
+
+    def __rmul__(self, other):
+        return self.__arithmetic(other, lambda x, y: y * x)
 
     def __add__(self, other):
         """Add array item for item with another array of the same
         dimensions or add a scalar to every element of the array.
         """
-        return self.__arithmetic(other, lambda x,y:x+y)
+        return self.__arithmetic(other, lambda x, y: x + y)
+
+    def __radd__(self, other):
+        return self.__arithmetic(other, lambda x, y: y + x)
+
+    def __sub__(self, other):
+        """Subtract another array of the same dimensions item for item from
+        array or subtract a scalar from every element of the array.
+        """
+        return self.__arithmetic(other, lambda x, y: x - y)
+
+    def __rsub__(self, other):
+        return self.__arithmetic(other, lambda x, y: y - x)
 
     def __div__(self, other):
         """Divide an array elementwise by a scalar or by the elements
         of another array.
         """
-        return self.__arithmetic(other, lambda x,y:x/y)
+        return self.__arithmetic(other, lambda x, y: x / y)
+
+    def __rdiv__(self, other):
+        return self.__arithmetic(other, lambda x, y: y / x)
+
     __truediv__ = __div__
 
     def __eq__(self, other):
         """Elementwise test for equality."""
-        if other == None: return False
-        return self.__arithmetic(other, lambda x,y:x==y)
-    
+        if other is None:
+            return False
+        return self.__arithmetic(other, lambda x, y: x == y)
+
     def __ne__(self, other):
         """Elementwise test for equality."""
-        if other == None: return True
-        return self.__arithmetic(other, lambda x,y:x!=y)
-    
-    
+        if other is None: return True
+        return self.__arithmetic(other, lambda x, y: x != y)
+
+
     def tolist(self):
         """Returns the object as list. Not possible for wrapped functions!"""
-        if self.obj != None:
+        if self.obj is not None:
             return self.obj
-        else:  raise TypeError, "Cannot convert wrapped function into a list!"
+        else:
+            raise TypeError("Cannot convert wrapped function into a list!")
 
     def copy(self):
         """Returns a copy of the array."""
         return copy.deepcopy(self)
-    
+
     def diagonal(self):
         """Returns the diagonal of the array as array"""
-        assert self.dimensions != None, \
-               "Cannot determine the diagonal for wrapped functions!"
+        assert self.dimensions is not None, \
+            "Cannot determine the diagonal for wrapped functions!"
         ds = len(self.dimensions)
-        if ds == 1:  return self.obj[0]
-        return array([self.__getitem__(*((i,)*ds)) \
-                      for i in xrange(len(self.obj))])
-          
+        if ds == 1:
+            return self.obj[0]
+        return array([self.__getitem__(((i,) * ds))
+                      for i in range(len(self.obj))])
+
 
 def asarray(seq):
     """Subsitute for Numeric.asarray."""
@@ -157,10 +187,10 @@ def asarray(seq):
 
 def dot(a, b):
     """Matrix multiplication of the arrays 'a' and 'b'"""
-    assert a.dimensions != None and b.dimensions != None,\
-      "Cannot multiply wrapped functions!"
+    assert a.dimensions is not None and b.dimensions is not None,\
+        "Cannot multiply wrapped functions!"
     assert len(a.dimensions) <= 2 and len(b.dimensions) <= 2,\
-      "Sorry, implementation does not support dot product for dimensions > 2"
+        "Sorry, implementation does not support dot product for dimensions > 2"
     if len(a.dimensions) == 2:
         if len(b.dimensions) == 1:
             v = []
@@ -170,10 +200,9 @@ def dot(a, b):
             return array(v)
     elif len(a.dimensions) == 1:
         if len(b.dimensions) == 1:
-            return sum([a[c]*b[c] for c in range(a.dimensions[0])])
-    assert False, "Sorry, matrix multiplication not yet implemented for "+\
-                  "dimensions %i, %i"%(len(a.dimensions),len(b.dimensions))
-matrixmultiply = dot
+            return sum([a[c] * b[c] for c in range(a.dimensions[0])])
+    assert False, "Sorry, matrix multiplication not yet implemented for " + \
+                  "dimensions %i, %i" % (len(a.dimensions),len(b.dimensions))
 
 
 def flatten(l):
@@ -182,7 +211,8 @@ def flatten(l):
     for item in l:
         if isinstance(item, list) or isinstance(item, tuple):
             r.extend(flatten(item))
-        else: r.append(item)
+        else:
+            r.append(item)
     return r
 
 
@@ -199,20 +229,25 @@ def concatenate(a, axis=0):
     for aw in a:  l.extend(aw.obj)
     return array(l)
 
+
 def diagonal(a, *parms):
     """Rough replacement for Numeric.diagonal."""
     return a.diagonal()
 
+
 def _zeros(shape):
     """Returns a list filled with zeros (floating point numbers)."""
-    if len(shape) == 0:  return 0.0
+    if len(shape) == 0:
+        return 0.0
     else:
-        l = [_zeros(shape[:-1]) for i in xrange(shape[-1])]
+        l = [_zeros(shape[:-1]) for i in range(shape[-1])]
         return l
+
 
 def zeros(shape, typeString="d"):
     """Returns an array filled with 0.0"""
     return array(_zeros(shape))
+
 
 def any(a):
     """--> true, if any of the elements of array 'a' are true."""
@@ -220,14 +255,18 @@ def any(a):
         if e: return True
     return False
 
+
 def all(a):
     """--> true, if all elements of array 'a' are true."""
     for e in flatten(a.obj):
-        if e: return True
-    return False    
+        if e:
+            return True
+    return False
 
-##def uniform(minimum, maximum, shape=[]):
-##    """Rough replacement for RandomArray.uniform."""
-##    if len(shape) == 0:  return random.uniform(minimum, maximum)
-##    assert len(shape) <= 1, "Multidimensional random arrays not yet supported!"
-##    return array([random.uniform(minumum, maximum) for i in range(shape[0])])
+
+def uniform(minimum, maximum, shape=[]):
+    """Rough replacement for RandomArray.uniform."""
+    if len(shape) == 0:
+        return random.uniform(minimum, maximum)
+    assert len(shape) <= 1, "Multidimensional random arrays not yet supported!"
+    return array([random.uniform(minimum, maximum) for i in range(shape[0])])

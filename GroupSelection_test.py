@@ -4,10 +4,10 @@
 
 import gtk
 from gtk import gdk
-from PyPlotter import gtkGfx, gtkSupport, psGfx
+from .PyPlotter import gtkGfx, gtkSupport, psGfx
 
-import GroupSelection
-from GroupSelection import *
+from . import GroupSelection
+from .GroupSelection import *
 
 
 ########################################################################
@@ -59,17 +59,17 @@ class GroupSimulation(object):
                                              (800,600),
                                              "Cooperation & Group Selection")
         for v in self.views: self.win.addRedrawHook(v.title, v.redraw)
-        for cv in self.win.pages.values():
+        for cv in list(self.win.pages.values()):
             cv.canvas.connect("button-press-event", self.onMouseButton)
             cv.canvas.set_events(gdk.EXPOSURE_MASK|gdk.BUTTON_PRESS_MASK)        
         self.win.show()
 
     def evolution(self, generations=100):
-        for i in xrange(generations):
+        for i in range(generations):
             if i > 0 and i % self.reshapeInterval == 0:
                 self.worlds[2].reshape(self.N, self.minSize, self.maxSize)
-            for k in xrange(len(self.worlds)): self.worlds[k].replicate()
-            for k in xrange(len(self.views)):  self.views[k].update()
+            for k in range(len(self.worlds)): self.worlds[k].replicate()
+            for k in range(len(self.views)):  self.views[k].update()
             
     def onMouseButton(self, widget, event):
         if event.button == 2 or event.button == 3:
@@ -86,7 +86,7 @@ class GroupSimulation(object):
                 label = self.win.get_currentPage()
                 for view in self.views:
                     if view.title == label: break
-                else: raise AssertionError, "No page with label %s"%label
+                else: raise AssertionError("No page with label %s"%label)
                 ps = psGfx.Driver()
                 view.redraw(ps)
                 ps.save(fname)
@@ -116,16 +116,16 @@ class GroupSimulation(object):
 
 def printRankings(sim):
     for rank, name, share in sim.worlds[0].aggregate().ranking():
-        print "%2i. %s %1.5f"%(rank, name.ljust(40), share)
-    print "\n"+"-"*40+"\n"
+        print("%2i. %s %1.5f"%(rank, name.ljust(40), share))
+    print("\n"+"-"*40+"\n")
     for rank, name, share in sim.worlds[1].aggregate(False).ranking():
-        print "%2i. %s %1.5f"%(rank, name.ljust(40), share)
-    print "\n"+"-"*40+"\n"
+        print("%2i. %s %1.5f"%(rank, name.ljust(40), share))
+    print("\n"+"-"*40+"\n")
     for rank, name, share in sim.worlds[1].aggregate(True).ranking():
-        print "%2i. %s %1.5f"%(rank, name.ljust(40), share)
-    print "\n"+"-"*40+"\n"
+        print("%2i. %s %1.5f"%(rank, name.ljust(40), share))
+    print("\n"+"-"*40+"\n")
     for rank, name, share in sim.worlds[2].aggregate(True).ranking():
-        print "%2i. %s %1.5f"%(rank, name.ljust(40), share)           
+        print("%2i. %s %1.5f"%(rank, name.ljust(40), share))           
 
 def Test1():
     sim = GroupSimulation(automata, 100, 3, 7)

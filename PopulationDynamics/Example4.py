@@ -45,7 +45,7 @@ PlayerTypes = {"I1":  "0101", "I2":  "1010", "I3":  "0110", "I4":  "1001",
                "I5":  "0100", "I6":  "1000", "I7":  "0111", "I8":  "1011",
                "I9":  "0001", "I10": "0010", "I11": "0000", "I12": "0011",
                "I13": "1101", "I14": "1110", "I15": "1100", "I16": "1111"}
-PlayerNames = PlayerTypes.keys()
+PlayerNames = list(PlayerTypes.keys())
 
 
 def Payoff(player1, player2):
@@ -110,6 +110,6 @@ def SignalingGame():
     
 
 if __name__ == "__main__":
-    print __doc__
+    print(__doc__)
     SignalingGame()
     

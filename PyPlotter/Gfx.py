@@ -16,8 +16,8 @@ from math import sin, cos, pi
 try:
     from Compatibility import *
 except ImportError:
-    from . import Compatibility 
-    globals().update(Compatibility.__dict__)
+    from .Compatibility import *
+
 
 ########################################################################
 #
@@ -27,8 +27,8 @@ except ImportError:
 
 THIN="thin"; MEDIUM="medium"; THICK="thick"             # pen size
 CONTINUOUS="continuous"; DASHED="dashed"; DOTTED="dotted"# line style
-SOLID="solid"; PATTERN_A="patternA";                    # fill style
-PATTERN_B="patternB"; PATTERN_C="patternC";
+SOLID="solid"; PATTERN_A="patternA"                     # fill style
+PATTERN_B="patternB"; PATTERN_C="patternC"
 PATTERNED="patternA"
 SANS="sans"; SERIF="serif"; FIXED="fixed"               # font style
 SMALL="small"; NORMAL="normal"; LARGE="large"           # font size
@@ -67,7 +67,7 @@ class Pen(object):
     """
 
     __slots__ = ('color', 'lineWidth', 'linePattern', 'fillPattern',
-		 'fontType', 'fontSize', 'fontWeight')
+		         'fontType', 'fontSize', 'fontWeight')
 
     def __repr__(self):
         return "Pen(" + repr(self.color) + "," \
@@ -491,7 +491,7 @@ class Window(Driver):
     """Opens a window that can be painted into. """
 
     def __init__(self, size, title):
-        pass
+        Driver.__init__(self)
 
     def refresh(self):
         """Refreshes the display."""
@@ -513,7 +513,9 @@ class Window(Driver):
 #
 ########################################################################
 
+# __pragma__('skip')
 if __name__ == "__main__":
     import systemTest
     systemTest.Test_nilDevice()
     print("nilDevice test sucessful")
+# __pragma__('noskip')

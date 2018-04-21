@@ -29,8 +29,14 @@ import copy, re, os, sys, math
 if sys.version_info[0] <= 2 and sys.version_info[1] <= 4:
     from sets import Set as set
 from bz2 import BZ2File as ZIPFsile
-import cPickle as pickle
+import pickle as pickle
 import wx
+
+
+import os
+import sys
+
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 #print sys.version
 #print wx.VERSION
@@ -52,20 +58,6 @@ from PyPlotter import wxGfx, psGfx, Colors, Graph, Simplex
 from PopulationDynamics import Dynamics
 from PopulationDynamics.Compatibility import *
 import Simulation, Strategies, PolymorphicStrategies, Logging, icons
-
-# psyco support to speed up the program
-# (delete or comment out the following lines,
-#  if it takes too much memory!)
-try:
-    import psyco
-    # psyco.log()
-    psyco.profile()
-    psyco.cannotcompile(re.compile)
-    psyco.cannotcompile(re.sub)
-    #print "Using psyco JIT to speed up program..."
-except ImportError:
-    #print "Psyco JIT not present. Will be slower..."
-    pass
 
 
 ###############################################################################
@@ -90,10 +82,11 @@ try:
     cmFlags = set(dir(Customized))
     if "DISABLE_USER_STRATEGIES" in cmFlags:
         DISABLE_USER_STRATEGIES = Customized.DISABLE_USER_STRATEGIES
-    if "SIMPLEX_FLAVOR" in cmFlags: SIMPLEX_FLAVOR = Customized.SIMPLEX_FLAVOR
-    if "NUM_ITERATIONS" in cmFlags: Simulation.NUM_ITERATIONS = \
-                                    Customized.NUM_ITERATIONS
-    cmFlags = None
+    if "SIMPLEX_FLAVOR" in cmFlags:
+        SIMPLEX_FLAVOR = Customized.SIMPLEX_FLAVOR
+    if "NUM_ITERATIONS" in cmFlags:
+        Simulation.NUM_ITERATIONS = Customized.NUM_ITERATIONS
+        cmFlags = None
 except ImportError:
     CUSTOMIZED_COOPSIM = False
 
@@ -236,21 +229,25 @@ from PyPlotter import Simplex
 
 
 def ClearUserStrategies():
-    f = file(os.path.expanduser("~")+"/UserStrategies.py", "w")
-    f.write(EmptyUserStrategiesPy)
-    f.close()
+    with open(os.path.join(os.path.expanduser("~"),
+                           "UserStrategies.py"), "w") as f:
+        f.write(EmptyUserStrategiesPy)
+
 
 if not DISABLE_USER_STRATEGIES:
     ClearUserStrategies()
     import UserStrategies
 
+
 def ScanModule(module):
-    return [module+"."+token for token in dir(eval(module))]
+    return [module + "." + token for token in dir(eval(module))]
+
 
 dirStrategies = ScanModule("Strategies")
 dirStrategies.extend(ScanModule("PolymorphicStrategies"))
-dirUserStrategies = [] # ScanModule("UserStrategies")]
-if CUSTOMIZED_COOPSIM: dirUserStrategies.extend(ScanModule("Customized"))
+dirUserStrategies = []  # ScanModule("UserStrategies")]
+if CUSTOMIZED_COOPSIM:
+    dirUserStrategies.extend(ScanModule("Customized"))
 
 
 def gatherStrategies():
@@ -259,15 +256,17 @@ def gatherStrategies():
 
     def checkIn(obj):
         if isinstance(obj, Strategies.Strategy) and \
-           not obj in strategyList:
+           obj not in strategyList:
             strategyList.append(obj)
             classes.add(obj.__class__)
 
     for objName in dirStrategies + dirUserStrategies:
         obj = eval(objName)
         if isinstance(obj, list):
-            for item in obj: checkIn(item)
-        else: checkIn(obj)
+            for item in obj:
+                checkIn(item)
+        else:
+            checkIn(obj)
 ##~     for objName in dirStrategies + dirUserStrategies:
 ##~         obj = eval(objName)
 ##~         if inspect.isclass(obj) and \
@@ -275,15 +274,18 @@ def gatherStrategies():
 ##~            not obj in classes:
 ##~             objInstance = eval(objName+"()")
 ##~             strategyList.append(objInstance)
-    if CUSTOMIZED_COOPSIM and Customized.__dict__.has_key("filterStrategies"):
+    if CUSTOMIZED_COOPSIM and "filterStrategies" in Customized.__dict__:
         return Customized.filterStrategies(strategyList)
-    else:  return strategyList
+    else:
+        return strategyList
+
 
 exampleModel = Simulation.SimSetup("Simple Example", [Strategies.TitForTat(),
                                                       Strategies.Dove(),
                                                       Strategies.Hawk(),
                                                       Strategies.Random()])
 exampleModel._userDefined = False
+
 
 def gatherModels():
     modelDict = {}
@@ -295,14 +297,17 @@ def gatherModels():
             for item in obj:
                 if isinstance(item, Simulation.SimSetup):
                     modelDict[item.name] = item
-    if CUSTOMIZED_COOPSIM and Customized.__dict__.has_key("filterModels"):
+    if CUSTOMIZED_COOPSIM and "filterModels" in Customized.__dict__:
         return Customized.filterModels(modelDict)
-    else: return modelDict
+    else:
+        return modelDict
 
 
 def pickSimplexRaster():
-    if SIMPLEX_FLAVOR == Simplex.TRAJECTORIES: return Simplex.RASTER_RANDOM
-    else: return Simplex.RASTER_DEFAULT
+    if SIMPLEX_FLAVOR == Simplex.TRAJECTORIES:
+        return Simplex.RASTER_RANDOM
+    else:
+        return Simplex.RASTER_DEFAULT
 
 
 
@@ -408,7 +413,7 @@ class SetupDialog(wx.Dialog):
             self.strategyDict[str(s)] = s
         self.selectedList = [str(s) for s in self.setup.strategyList]
         self.selectedList.sort()
-        self.availableList = [s for s in self.strategyDict.keys() \
+        self.availableList = [s for s in list(self.strategyDict.keys()) \
                                 if not s in self.selectedList]
         self.availableList.sort()
 
@@ -837,16 +842,18 @@ class SimWindow(wx.Frame, Logging.LogNotificationInterface):
                     name, event, helpText, icon = entry
                     mid = wx.NewId()
                     item = wx.MenuItem(menu, mid, name, helpText, 0)
-                    menu.AppendItem(item)
-                    wx.EVT_MENU(self, mid, event)
+                    menu.Append(item)  # deprecated: AppendItem(item)
+                    print(type(mid), mid)
+                    print(type(event), event)
+                    print(type(wx.EVT_PAINT))
+                    self.Bind(wx.EVT_MENU, event, id=mid)  # deprecated: wx.EVT_MENU(self, mid, event)
                     if icon:
-                        toolTipStr = filter(lambda ch: ch != "&", name)
                         #bitmap = wx.Bitmap(sys.path[0]+"/icons/"+icon+".png",
                         #                   wx.BITMAP_TYPE_PNG)
-                        bitmap = wx.BitmapFromXPMData(icons.Dict[icon])
-                        self.toolBar.AddTool(mid, bitmap,
-                                             shortHelpString = toolTipStr,
-                                             longHelpString = helpText)
+                        bitmap = wx.Bitmap(icons.Dict[icon])  # deprecated: wx.BitmapFromXPMData(icons.Dict[icon])
+                        self.toolBar.AddTool(mid,"", bitmap, helpText,
+                                             # longHelpString = helpText
+                                             )
                 else:  menu.AppendSeparator()
             if menuName != "&Help":  self.toolBar.AddSeparator()
             self.menuBar.Append(menu, menuName)
@@ -947,7 +954,7 @@ class SimWindow(wx.Frame, Logging.LogNotificationInterface):
     def redoModelsMenu(self):
         itemList = [item for item in self.simMenu.GetMenuItems()] # small work around for wxPython 2.8.7.1
         for item in itemList[4:]:  self.simMenu.Remove(item.GetId())
-        modelNames = self.models.keys()
+        modelNames = list(self.models.keys())
         modelNames.sort()
         self.simMenuIds = {}
         for name in modelNames:
@@ -989,7 +996,7 @@ class SimWindow(wx.Frame, Logging.LogNotificationInterface):
         strategyDict = {}
         for s in gatherStrategies():  strategyDict[str(s)] = s
         remKeys = []
-        for key, model in self.models.items():
+        for key, model in list(self.models.items()):
             try:
                 sl = [strategyDict[str(s)] for s in model.strategyList]
             except KeyError:
@@ -1016,11 +1023,12 @@ class SimWindow(wx.Frame, Logging.LogNotificationInterface):
             f = file(os.path.expanduser("~")+"/UserStrategies.py", "w")
             f.write(code)
             f.close()
-            if "UserStrategies" in sys.modules.keys():
+            if "UserStrategies" in list(sys.modules.keys()):
                 del sys.modules["UserStrategies"]
             import UserStrategies
             # reload(UserStrategies) did not work, why?
-        except IOError,(errno, strerr):
+        except IOError as xxx_todo_changeme2:
+            (errno, strerr) = xxx_todo_changeme2.args
             dialog = wx.MessageDialog(self, "IOError(%s): %s while processing "\
                                       "custom code"%(errno,strerr),
                                       "Error", wx.OK|wx.ICON_ERROR)
@@ -1043,7 +1051,7 @@ class SimWindow(wx.Frame, Logging.LogNotificationInterface):
             error_line = "?"
 
         if error_flag:
-            if sys.modules.has_key("UserStrategies"):
+            if "UserStrategies" in sys.modules:
                 del sys.modules["UserStrategies"]
             dirUserStrategies = []
             dialog = wx.MessageDialog(self,
@@ -1073,7 +1081,7 @@ class SimWindow(wx.Frame, Logging.LogNotificationInterface):
 
         self.models.update(gatherModels())
         self.elimStaleModels()
-        if not self.simSetup.name in self.models.keys():
+        if not self.simSetup.name in list(self.models.keys()):
             self.simSetup = exampleModel
             self.simulation.newSetup(self.simSetup, self.progressIndicator)
             self.continueSim()
@@ -1101,7 +1109,8 @@ class SimWindow(wx.Frame, Logging.LogNotificationInterface):
             f.close()
             self.clearUnsavedFlag()
             self.progressIndicator(1.0)
-        except IOError,(errno, strerr):
+        except IOError as xxx_todo_changeme3:
+            (errno, strerr) = xxx_todo_changeme3.args
             dialog = wx.MessageDialog(self, "IOError(%s): %s"%(errno,strerr),
                                       "Error", wx.OK|wx.ICON_ERROR)
             dialog.ShowModal()
@@ -1126,7 +1135,7 @@ class SimWindow(wx.Frame, Logging.LogNotificationInterface):
                 self.progEditor.AppendText(customCode)
                 self.progressIndicator(0.2)
                 self.models = pickle.load(f)
-                for m in self.models.itervalues():
+                for m in self.models.values():
                     m.cachedPM = None
                     m.cachedLog = None
                 self.progressIndicator(0.8)
@@ -1139,7 +1148,8 @@ class SimWindow(wx.Frame, Logging.LogNotificationInterface):
                 self.clearUnsavedFlag()
                 # self.continueSim()
             self.progressIndicator(1.0)
-        except IOError,(errno, strerr):
+        except IOError as xxx_todo_changeme4:
+            (errno, strerr) = xxx_todo_changeme4.args
             dialog = wx.MessageDialog(self, "IOError(%s): %s"%(errno,strerr),
                                       "Error", wx.OK|wx.ICON_ERROR)
             dialog.ShowModal()
@@ -1168,7 +1178,7 @@ class SimWindow(wx.Frame, Logging.LogNotificationInterface):
                 if pending == SIMPLEX_REDRAW:
                     self.simplex.redraw()
                 elif pending == SIMPLEX_RESIZE:
-                    self.simplex.resizedGfx()                
+                    self.simplex.resizedGfx()
                 #self.statusBarHint("Ready.")
                 wx.EndBusyCursor()
             w,h = self.simplexDC.GetSizeTuple()
@@ -1352,8 +1362,8 @@ class SimWindow(wx.Frame, Logging.LogNotificationInterface):
     def dumpHTMLImages(self, w = SAVE_IMAGE_WIDTH, h = SAVE_IMAGE_HEIGHT):
         try:
             os.mkdir(self.simulation.imgdirName)
-        except OSError, errobj: # catch dir exists error
-            if errobj.errno != 17:  raise OSError, errobj
+        except OSError as errobj: # catch dir exists error
+            if errobj.errno != 17:  raise OSError(errobj)
         N = float(len(self.simulation.rangeStack)+1); count = 1
         msg = "Writing images for HTML page..."
         self.progressIndicator(0.0, message = msg)
@@ -1427,7 +1437,8 @@ class SimWindow(wx.Frame, Logging.LogNotificationInterface):
                         psgd = psGfx.Driver()
                         self.redrawAsPostscript(psgd)
                         psgd.save(fName)
-                    except IOError,(errno, strerr):
+                    except IOError as xxx_todo_changeme:
+                        (errno, strerr) = xxx_todo_changeme.args
                         dialog = wx.MessageDialog(self, "IOError(%s): %s" % \
                                                   (errno,strerr), "Error",
                                                   wx.OK|wx.ICON_ERROR)
@@ -1460,7 +1471,8 @@ class SimWindow(wx.Frame, Logging.LogNotificationInterface):
                     f = file(fName, "w")
                     f.write(text)
                     f.close()
-                except IOError,(errno, strerr):
+                except IOError as xxx_todo_changeme1:
+                    (errno, strerr) = xxx_todo_changeme1.args
                     dialog = wx.MessageDialog(self,
                         "IOError(%s): %s" % (errno,strerr),
                         "Error", wx.OK|wx.ICON_ERROR)
@@ -1484,7 +1496,7 @@ class SimWindow(wx.Frame, Logging.LogNotificationInterface):
                 i = int(l[-1]); name = " ".join(l[:-1])
             else: i = 2
             base_name = name
-            while self.models.has_key(name):
+            while name in self.models:
                 name = base_name+" "+str(i); i += 1
             return name
         if self.currentPage == self.PAGE_USER:
@@ -1540,7 +1552,7 @@ class SimWindow(wx.Frame, Logging.LogNotificationInterface):
         dialog.Destroy()
         if result == wx.ID_OK:
             self.simSetup = dialog.GetValue()
-            if self.models.has_key(name):  del self.models[name]
+            if name in self.models:  del self.models[name]
             self.models[self.simSetup.name] = self.simSetup
             self.redoModelsMenu()
             self.statusBarHint("Running...")
@@ -1565,10 +1577,10 @@ class SimWindow(wx.Frame, Logging.LogNotificationInterface):
         self.statusBarHint("Running...")
         self.simulation.newSetup(self.simSetup, self.progressIndicator)
         self.continueSim()
-        self.statusBarHint("Ready.")        
+        self.statusBarHint("Ready.")
 
     def OnRemoveModels(self, event):
-        lst = self.models.keys()
+        lst = list(self.models.keys())
         if self.simSetup.name in lst: lst.remove(self.simSetup.name)
         lst.sort()
         dialog = wxMultipleChoiceDialog(self, "Select models to remove:",
@@ -1612,7 +1624,8 @@ class SimWindow(wx.Frame, Logging.LogNotificationInterface):
             f = file(path, "r")
             GPL = f.read()
             f.close()
-        except IOError,(errno, strerr):
+        except IOError as xxx_todo_changeme5:
+            (errno, strerr) = xxx_todo_changeme5.args
             dialog = wx.MessageDialog(self, "IOError(%s): %s"%(errno,strerr),
                                       "Error", wx.OK|wx.ICON_ERROR)
             dialog.ShowModal()
@@ -1638,7 +1651,7 @@ class SimulationApp(wx.App):
 
 def main():
     application = SimulationApp(0)
-    if CUSTOMIZED_COOPSIM and Customized.__dict__.has_key("main"):
+    if CUSTOMIZED_COOPSIM and "main" in Customized.__dict__:
         Customized.main(application.main)
     application.MainLoop()
     try:

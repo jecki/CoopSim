@@ -7,11 +7,6 @@ number of filter functions that allow only shades of a certain color to
 pass through. This helps grouping graphs with similar colors.
 """
 
-try:
-    from Compatibility import *
-except ImportError:
-    from . import Compatibility 
-    globals().update(Compatibility.__dict__)
 
 ########################################################################
 #

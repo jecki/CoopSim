@@ -44,7 +44,7 @@ class Deme(object):
         species         - list of species
         distribution    - distribution of the strategies
         fitnessCache    - cache for the fitness values
-    """  
+    """
     def __str__(self):
         return self.name
 
@@ -53,7 +53,7 @@ class Deme(object):
         if name == "distribution":
             object.__setattr__(self, "fitnessCache", None)
         object.__setattr__(self, name, value)
-   
+
     def __init__(self, species, distribution = None, name=""):
         """Initializes the Deme with the list of species, the distribution
         vector and a name (if desired). The list of species is always
@@ -64,7 +64,7 @@ class Deme(object):
         assert len(species) > 0, "Too few species (%i)!"%len(species)
         assert distribution == None or len(species) == len(distribution), \
                "Species list and distribution array are of unequal size!"
-        self.fitnessCache = None     
+        self.fitnessCache = None
         if distribution != None: self.__distribution = asarray(distribution)
         else: self.__distribution = UniformDistribution(len(species))
         if name: self.name = name
@@ -92,15 +92,15 @@ class Deme(object):
         other demes. The order of species in the merged deme is arbitrary!"""
         species_dict = {};  share_dict = {}
         for deme in (self,)+others:
-            for i in xrange(len(deme.species)):
+            for i in range(len(deme.species)):
                 species = deme.species[i]
                 name = str(species)
-                if species_dict.has_key(name):
+                if name in species_dict:
                     share_dict[name] += deme.distribution[i]
                 else:
                     species_dict[name] = species
                     share_dict[name] = deme.distribution[i]
-        species = species_dict.values()
+        species = list(species_dict.values())
         dist = array([share_dict[s.name] for s in species])
         return self.new(species, dist)
 
@@ -113,7 +113,7 @@ class Deme(object):
         with 'faktor'"""
         ndist = self.distribution * faktor
         return self.new(self.species, ndist)
-        
+
     def normalized(self):
         """Returns a normalized (population shares add up to 1.0)
         copy of the deme."""
@@ -142,7 +142,7 @@ class Deme(object):
         recursively aggregated. If 'weighted' is false the
         distribution (relative size) of the demes will not be taken
         into account. If there are no subdemes, 'self' is returned.
-        Warning: If a new deme is created, the order of the species 
+        Warning: If a new deme is created, the order of the species
         in this new deme arbitrary!"""
         return self
 
@@ -151,27 +151,27 @@ class Deme(object):
         'minSize' and 'maxSize' and populations randomly picked from
         this deme."""
         pool = self.distribution #.copy() # don't need a copy!
-        sizes = [random.randint(minSize, maxSize) for i in xrange(N)]
+        sizes = [random.randint(minSize, maxSize) for i in range(N)]
         assert sum(sizes) >= len(pool), "Too few or too small demes to spawn!"
-        rng = range(len(pool))
+        rng = list(range(len(pool)))
         sg = [[] for i in rng];  l = 0
-        for count in xrange(N):
+        for count in range(N):
             s = sizes[count]
             if l < len(pool):
-                g = range(l, min(l+s, len(pool)))
+                g = list(range(l, min(l+s, len(pool))))
                 g.extend(random.sample(rng, max(0,l+s-len(pool))))
                 l += s
             else:  g = random.sample(rng, s)
             for st in g:  sg[st].append(count)
-        species = [[] for i in xrange(N)]
-        distribution = [[] for i in xrange(N)]
-        for i in xrange(len(sg)):
+        species = [[] for i in range(N)]
+        distribution = [[] for i in range(N)]
+        for i in range(len(sg)):
             chunks = list(RandomDistribution(len(sg[i])) * pool[i])
             for g in sg[i]:
                 species[g].append(self.species[i])
                 distribution[g].append(chunks.pop())
         demes = []
-        for i in xrange(N): demes.append(self.new(species[i], distribution[i]))
+        for i in range(N): demes.append(self.new(species[i], distribution[i]))
         #assert almostEqual(sum([sum(d.distribution) for d in demes]), 1.0), \
         #    "self test failed %f"%sum([sum(d.distribution) for d in demes])
         distribution = norm(array([sum(d.distribution) for d in demes]))
@@ -180,16 +180,16 @@ class Deme(object):
 
     def ranking(self):
         """-> list of (rank, species name, population share) tuples."""
-        l = zip(self.distribution,[str(s) for s in self.species])
+        l = list(zip(self.distribution,[str(s) for s in self.species]))
         l.sort(); l.reverse()
-        ranking = [(r+1, l[r][1], l[r][0]) for r in xrange(len(l))]
+        ranking = [(r+1, l[r][1], l[r][0]) for r in range(len(l))]
         return ranking
 
 
 class SuperDeme(Deme):
     """A Deme that contains other demes as species.
 
-    In order to determine the fitness of the (Sub-)Demes the 
+    In order to determine the fitness of the (Sub-)Demes the
     simplemost model of a group selection process is implemented:
     The fitness of the (Sub-)Demes is the dot product of the vector of
     the fitness values of the species with the vector of population
@@ -201,7 +201,7 @@ class SuperDeme(Deme):
     def _fitness(self):
         return array([matrixmultiply(d.fitness(), d.distribution) \
                       for d in self.species])
-    
+
     def replicate(self):
         for d in self.species:
             if isinstance(d, Deme):  d.replicate()
@@ -209,7 +209,7 @@ class SuperDeme(Deme):
 
     def aggregate(self, weighted = True):
         l = []
-        for i in xrange(len(self.species)):
+        for i in range(len(self.species)):
             d = self.species[i]
             if isinstance(d, SuperDeme): d = d.aggregate(weighted)
             if weighted:
@@ -226,7 +226,7 @@ class SuperDeme(Deme):
         pool = self.aggregate(weighted = True);  n = len(pool.species)
         if N <= 0: N = len(self.species)
         if minSize <= 0: minSize = max(1, N/7)
-        if maxSize <= 0: maxSize = min(l, max(2, N/4)) 
+        if maxSize <= 0: maxSize = min(l, max(2, N/4))
         superdeme = pool.spawn(N, minSize, maxSize)
         return superdeme
 
@@ -234,7 +234,7 @@ class SuperDeme(Deme):
         """Reshape the deme structure of this deme."""
         sd = self.reshaped(N, minSize, maxSize)
         self.species = sd.species
-        self.distribution = sd.distribution        
+        self.distribution = sd.distribution
 
 
 ########################################################################
@@ -260,17 +260,17 @@ class PDDeme(Deme):
         payoff      - the payoff matrix of the deme (due to lazy
                       creation payoff is 'None' until _fitness is
                       called for the first time.
-                    
+
         polymorphic - A boolean that indicates whether the deme
                      contains any strategies that may change from
                      generation to generation, e.g. evolutionary
                      strategies. If this is true than the payoff
                      matrix will be recalculated between before
                      every new generation.
-    """   
+    """
     def __init__(self, strategies, distribution=None, name=""):
         assert check_instances(strategies, Strategy),\
-               "All species must be prisoner's dilemma strategies!"        
+               "All species must be prisoner's dilemma strategies!"
         Deme.__init__(self, strategies, distribution, name)
         self.polymorphic = False
         for s in strategies:
@@ -324,7 +324,7 @@ class DemeView(object):
     def update(self):
         """Updates the deme view."""
         agg = self.deme.aggregate(self.weighted)
-        for i in xrange(len(agg.species)):
+        for i in range(len(agg.species)):
             name = str(agg.species[i])
             value = agg.distribution[i]
             self.graph.addValue(name, self.generation, value)

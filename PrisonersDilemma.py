@@ -48,7 +48,7 @@ class MatchesCache(object):
     def check(self, *parameters):
         if not USE_CACHE: return False
         key = self.__genkey(parameters)
-        if self.cache.has_key(key):
+        if key in self.cache:
             self.pending = self.cache[key]
             return True
         else:  return False
@@ -71,7 +71,7 @@ outsourced_last_name = ""
 def outsourced_pages():
     """->(matchlog, filename) for each cached match log."""
     assert MATCH_LOG_OUTSOURCED, "Outsourced match log has been turned off."
-    for key, value in outsourced_match_logs.cache.iteritems(): yield value
+    for key, value in outsourced_match_logs.cache.items(): yield value
 
 
 ###############################################################################
@@ -89,7 +89,7 @@ def noiseFilter(move, noise):
 
 def printLog(start, stop, movesA, movesB):
     s = ""; l = ["<pre>"]
-    for i in xrange(start, stop):
+    for i in range(start, stop):
         s += str(movesA[i]) + " " + str(movesB[i])
         if (i+1) % 10 == 0:
             l.append(s+"\n")
@@ -121,9 +121,9 @@ def ReiteratedPD(playerA, playerB, payoffs, iterations = NUM_ITERATIONS,
     global outsourced_last_name
     if type(iterations) == type(0.):
         if iterations <= 0.0 or iterations >= 1.0:
-            raise ValueError, "%f violates 0.0 < iterations < 1.0 !"%iterations
+            raise ValueError("%f violates 0.0 < iterations < 1.0 !"%iterations)
         iterations = int(math.log(0.5, iterations)+0.5)
-    elif iterations <= 0:  raise ValueError, "%i iterations <= 0 !"%iterations
+    elif iterations <= 0:  raise ValueError("%i iterations <= 0 !"%iterations)
 
     if not (playerA.randomizing or playerB.randomizing or noise != 0.0):
         samples = 1
@@ -132,7 +132,7 @@ def ReiteratedPD(playerA, playerB, payoffs, iterations = NUM_ITERATIONS,
         result, movesA, movesB = cache.fetch()
     else:
         result = [0, 0]
-        for x in xrange(samples):
+        for x in range(samples):
             A = noiseFilter(playerA.firstMove(), noise)
             B = noiseFilter(playerB.firstMove(), noise)
             movesA = [A]
@@ -140,7 +140,7 @@ def ReiteratedPD(playerA, playerB, payoffs, iterations = NUM_ITERATIONS,
             result[0] += payoffs[A,B,0]
             result[1] += payoffs[A,B,1]
 
-            for r in xrange(iterations-1):
+            for r in range(iterations-1):
                 A = noiseFilter(playerA.nextMove(movesA, movesB), noise)
                 B = noiseFilter(playerB.nextMove(movesB, movesA), noise)
                 movesA.append(A)
@@ -209,7 +209,7 @@ def GenPayoffMatrix(strategies, payoffs = PD_2P_PAYOFF, iterations = NUM_ITERATI
     """
     strategies_copy = copy.deepcopy(strategies)
     M = [];  myLog = [];  resultLog = []; summaryLog = [];
-    for i in xrange(len(strategies)):  M.append([0.]*len(strategies))
+    for i in range(len(strategies)):  M.append([0.]*len(strategies))
     l, c = 0,0;  lines = len(strategies);  full = float(lines * (lines + 1) / 2)
     for s in strategies:
         for t in strategies_copy[l:]:

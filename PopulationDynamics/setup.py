@@ -1,6 +1,6 @@
 from distutils.core import setup
 setup(name="PopulationDynamics",
-      version="0.1.0",
+      version="0.1.1",
       description="Basic functions and examples of population dynamics in evolution",
       author="Eckhart Arnold",
       license="MITL",

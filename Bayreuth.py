@@ -381,8 +381,7 @@ class BaySteffenHahn(RandomizingStrategy):
             r = random.random()
             if r < 0.5: return opMoves[-1] # TFT
             elif r < 0.7: return 0         # Hawk
-            else:                          
+            else:
                 self.coopFlag = True       # cooperate 2 times
-                return 1 
-steffenHahn = BaySteffenHahn()            
-            
+                return 1
+steffenHahn = BaySteffenHahn()

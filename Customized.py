@@ -125,7 +125,7 @@ def filterModels(md):
 #automata = genAllAutomata()
 #endGameCheaters = genEndGameCheaters(0, 10)
 #
-#automata_setup = SimSetup(name         = "01 Automata", 
+#automata_setup = SimSetup(name         = "01 Automata",
 #                          strategyList = automata)
 #
 #endgamecheaters_setup = SimSetup(name         = "02 Endgame Cheaters",
@@ -172,7 +172,7 @@ def filterModels(md):
 #                                                          reshapeInterval = 10))
 #
 #group_selection4 = SimSetup(name         = "10 Group Selection More Strategies",
-#                            strategyList = [Dove(), Grim(), SignalingCheater(), TitForTat()], 
+#                            strategyList = [Dove(), Grim(), SignalingCheater(), TitForTat()],
 #                            payoff       = (5.9, 3.0, 1.0, 0.0),
 #                            demes        = DemeDescriptor(num = 10,
 #                                                          minSize = 1,
