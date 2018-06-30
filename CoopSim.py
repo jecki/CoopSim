@@ -504,8 +504,8 @@ class SetupDialog(wx.Dialog):
         # self.wbm = wx.Bitmap(sys.path[0]+"/icons/warn.png",wx.BITMAP_TYPE_PNG)
         # self.empty = wx.Bitmap(sys.path[0]+"/icons/empty.png",
         #                        wx.BITMAP_TYPE_PNG)
-        self.wbm = wx.BitmapFromXPMData(icons.Dict["warn"])
-        self.empty = wx.BitmapFromXPMData(icons.Dict["empty"])
+        self.wbm = wx.Bitmap(icons.Dict["warn"])
+        self.empty = wx.Bitmap(icons.Dict["empty"])
         self.warning = wx.BitmapButton(self, -1, self.empty,
                                        style = wx.NO_BORDER)
         self.warntps = "The payoff parameters T,R,P,S \n"+\
@@ -877,18 +877,18 @@ class SimWindow(wx.Frame, Logging.LogNotificationInterface):
 
         self.graphPanel = wx.Panel(self.noteBook, -1)
         self.noteBook.AddPage(self.graphPanel, self.PAGE_ECO)
-        self.graphBitmap = wx.EmptyBitmap(800, 600)
+        self.graphBitmap = wx.Bitmap(800, 600)  # deprecated .EmptyBitmap(800, 600)
         self.graphDC = wx.BufferedDC(None, self.graphBitmap)
         self.graphDriver = wxGfx.Driver(self.graphDC)
         self.graph = Graph.Cartesian(self.graphDriver,
             0, 0.0, 50, 1.0,
             "Population dynamical simulation of the reiterated "+\
             "Prisoners Dilemma", "Generations", "Population")
-        wx.EVT_PAINT(self.graphPanel, self.OnGraphPaint)
+        self.graphPanel.Bind(wx.EVT_PAINT, self.OnGraphPaint)
 
         self.simplexPanel = wx.Panel(self.noteBook, -1)
         self.noteBook.AddPage(self.simplexPanel, self.PAGE_SIMPLEX)
-        self.simplexBitmap = wx.EmptyBitmap(800, 600)
+        self.simplexBitmap = wx.Bitmap(800, 600)  # deprecated .EmptyBitmap(800, 600)
         self.simplexDC = wx.BufferedDC(None, self.simplexBitmap)
         self.simplexDriver = wxGfx.Driver(self.simplexDC)
         self.simplex = Simplex.Diagram(self.simplexDriver, lambda p:p,
@@ -897,7 +897,7 @@ class SimWindow(wx.Frame, Logging.LogNotificationInterface):
             "Strategy 1", "Strategy 2", "Strategy 3",
              styleFlags = SIMPLEX_FLAVOR, raster=pickSimplexRaster())
         self.simplexPending = SIMPLEX_REDRAW
-        wx.EVT_PAINT(self.simplexPanel, self.OnSimplexPaint)
+        self.simplexPanel.Bind(wx.EVT_PAINT, self.OnSimplexPaint)
 
         self.progPanel = wx.Panel(self.noteBook, -1)
         if not DISABLE_USER_STRATEGIES:
@@ -914,19 +914,19 @@ class SimWindow(wx.Frame, Logging.LogNotificationInterface):
         sizer.Add(self.progEditor, 1, wx.EXPAND)
         self.progPanel.SetSizer(sizer)
 
-        wx.EVT_NOTEBOOK_PAGE_CHANGED(self.noteBook, -1, self.OnNotebook)
+        self.noteBook.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGED, self.OnNotebook)
 
         # self.resizeFlag = False
         self.selectNB = -1
-        wx.EVT_SIZE(self, self.OnSize)
+        self.Bind(wx.EVT_SIZE, self.OnSize)
         # Due to a bug (?) of the Linux/Gtk version of wxWidgets 2.4.2
         # the use of a timer is necessary for redraw after resize !
         timerId = wx.NewId()
         self.redrawTimer = wx.Timer(self, timerId)
-        wx.EVT_TIMER(self, timerId, self.OnTimer)
+        # wx.EVT_TIMER(self, timerId, self.OnTimer)
         self.initFlag = True
-        wx.EVT_IDLE(self, self.OnIdle)
-        wx.EVT_CLOSE(self, self.OnExit)
+        self.Bind(wx.EVT_IDLE, self.OnIdle)
+        self.Bind(wx.EVT_CLOSE, self.OnExit)
 
         self.simulation = Simulation.Simulation(self.graph, self.simplex,
                                                 self.log, self)
@@ -961,15 +961,15 @@ class SimWindow(wx.Frame, Logging.LogNotificationInterface):
             mid = wx.NewId()
             self.simMenuIds[mid] = name
             item = wx.MenuItem(self.simMenu, mid, name, "", wx.ITEM_CHECK)
-            self.simMenu.AppendItem(item)
+            self.simMenu.Append(item)  # deprecated: .AppendItem(item)
             if name == self.simSetup.name:  item.Check(True)
-            wx.EVT_MENU(self, mid, self.OnPickModel)
+            self.Bind(wx.EVT_MENU, self.OnPickModel, id=mid)
         self.simMenu.AppendSeparator()
         mid = wx.NewId()
         item = wx.MenuItem(self.simMenu, mid, "&Remove Models ...",
                  "Remove one or more of the simulation models from list.", 0)
-        self.simMenu.AppendItem(item)
-        wx.EVT_MENU(self, mid, self.OnRemoveModels)
+        self.simMenu.Append  # dprecated .AppendItem(item)
+        self.Bind(wx.EVT_MENU, self.OnRemoveModels, id=mid)
 
     def updateLog(self, logStr):
         self.logBook.SetPage(re.sub("<img.*?>","",logStr))
@@ -1163,7 +1163,7 @@ class SimWindow(wx.Frame, Logging.LogNotificationInterface):
     def updateGraph(self, destDC = None):
         if self.currentPage == self.PAGE_ECO:
             if not destDC: destDC = wx.ClientDC(self.graphPanel)
-            w,h = self.graphDC.GetSizeTuple()
+            w,h = self.graphDC.GetSize()
             destDC.Blit(0, 0, w, h, self.graphDC, 0, 0)
 
     def updateSimplex(self, destDC = None):
@@ -1181,7 +1181,7 @@ class SimWindow(wx.Frame, Logging.LogNotificationInterface):
                     self.simplex.resizedGfx()
                 #self.statusBarHint("Ready.")
                 wx.EndBusyCursor()
-            w,h = self.simplexDC.GetSizeTuple()
+            w,h = self.simplexDC.GetSize()
             destDC.Blit(0, 0, w, h, self.simplexDC, 0, 0)
 
     def OnTimer(self, event):
@@ -1330,7 +1330,7 @@ class SimWindow(wx.Frame, Logging.LogNotificationInterface):
             dialog.Destroy()
             if result != wx.ID_YES: return
         self.noteBook.SetSelection(0)
-        wx.EVT_CLOSE(self, None)
+        self.Bind(wx.EVT_CLOSE, None)
         self.Close(True)
 
 

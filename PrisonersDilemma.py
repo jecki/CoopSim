@@ -7,16 +7,16 @@ from Logging import H1, H2, H3, H1X, H2X, H3X, HTMLLog
 
 
 MATCH_LOG_LEN = 100
-NUM_SAMPLES = 10 # Number of matches for calculating the average score
-                # in case randomizing strategies or game noise is used
-NUM_ITERATIONS = 1000 # Number of rounds in the reiterated PD
-PD_2P_PAYOFF = array([[[1, 1], [5, 0]],\
+NUM_SAMPLES = 10    # Number of matches for calculating the average score
+                    # in case randomizing strategies or game noise is used
+NUM_ITERATIONS = 1000  # Number of rounds in the reiterated PD
+PD_2P_PAYOFF = array([[[1, 1], [5, 0]], \
                       [[0, 5], [3, 3]]])
-##PD_2P_PAYOFF = array([[[1.0, 1.0], [3.5, 0.0]],\
-##                      [[0.0, 3.5], [3.0, 3.0]]])
+# PD_2P_PAYOFF = array([[[1.0, 1.0], [3.5, 0.0]],\
+#                       [[0.0, 3.5], [3.0, 3.0]]])
 MATCH_LOG_OUTSOURCED = False
 MATCH_LOG_DIRECTORY = "Matchlogs"
-USE_CACHE = False # Cache matches for reuse
+USE_CACHE = False  # Cache matches for reuse
 
 if not USE_CACHE:
     MATCH_LOG_OUTSOURCED = False
@@ -152,7 +152,7 @@ def ReiteratedPD(playerA, playerB, payoffs, iterations = NUM_ITERATIONS,
         cache.store((tuple(result), tuple(movesA), tuple(movesB)),
                     playerA, playerB, payoffs, iterations, samples, noise)
 
-    if log != None:
+    if log is not None:
         if MATCH_LOG_OUTSOURCED and outsourced_match_logs.check(playerA,
            playerB, payoffs, iterations, samples, noise):
             l, outsourced_last_name = outsourced_match_logs.fetch()
@@ -169,9 +169,9 @@ def ReiteratedPD(playerA, playerB, payoffs, iterations = NUM_ITERATIONS,
             if MATCH_LOG_OUTSOURCED or MATCH_LOG_LEN >= iterations:
                 log.extend(printLog(0, iterations, movesA, movesB))
             else:
-                log.extend(printLog(0, MATCH_LOG_LEN/2, movesA, movesB))
+                log.extend(printLog(0, MATCH_LOG_LEN//2, movesA, movesB))
                 log.append("...\n")
-                log.extend(printLog(iterations-MATCH_LOG_LEN/2, iterations,
+                log.extend(printLog(iterations-MATCH_LOG_LEN//2, iterations,
                                     movesA, movesB))
             log.append("</p><br />\n\n")
 
@@ -213,7 +213,7 @@ def GenPayoffMatrix(strategies, payoffs = PD_2P_PAYOFF, iterations = NUM_ITERATI
     l, c = 0,0;  lines = len(strategies);  full = float(lines * (lines + 1) / 2)
     for s in strategies:
         for t in strategies_copy[l:]:
-            if log != None: matchLog = []
+            if log is not None: matchLog = []
             else: matchLog = None
             a,b = ReiteratedPD(s, t, payoffs, iterations, samples,
                                noise, matchLog)
@@ -221,7 +221,7 @@ def GenPayoffMatrix(strategies, payoffs = PD_2P_PAYOFF, iterations = NUM_ITERATI
                 M[l][c] = (a+b)/2.0
             else:
                 M[l][c] = a;  M[c][l] = b
-            if log != None:
+            if log is not None:
                 if MATCH_LOG_OUTSOURCED:
                     resultLog.append('<a href="'+outsourced_last_name + \
                                      '" target="_blank">' + \
@@ -238,7 +238,7 @@ def GenPayoffMatrix(strategies, payoffs = PD_2P_PAYOFF, iterations = NUM_ITERATI
             progressCallback((l * lines - l*(l+1)/2 + c) / full)
         l += 1;  c = l
 
-    if log != None:
+    if log is not None:
         t = "";  l = 0;  points = []
         for s in strategies:
             total = sum(M[l])/float(len(strategies));  k = 0

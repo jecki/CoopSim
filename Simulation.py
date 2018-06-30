@@ -24,12 +24,14 @@ NO_GRAPH_OPTIMIZATION = False # graph drawing will be slowed down but
                               # accuracy is increased (for printing and saving)
 FLUSH_CACHE = True # flush the cache when a new simulation is started
 
+
 ###############################################################################
 #
 # Deme class for group selection that takes into account all parameters
 # from the simulation setup.
 #
 ###############################################################################
+
 
 class RichPDDeme(GS.PDDeme):
     """A Deme where the species represent stategies in the reiterated
@@ -41,10 +43,12 @@ class RichPDDeme(GS.PDDeme):
         setup:      the parameters of the simulation
         fF   :      fitness function
     """
-    def __init__(self, setup, name="", species_override = None,
-                 distribution_or = None):
-        if species_override == None: species_override = setup.strategyList
-        if distribution_or == None: distribution_or = setup.population
+    def __init__(self, setup, name="", species_override=None,
+                 distribution_or=None):
+        if species_override is None:
+            species_override = setup.strategyList
+        if distribution_or is None:
+            distribution_or = setup.population
         # assert GS.check_instances(species_override, Strategy),\
         #        "All species must be prisoner's dilemma strategies!"
 
@@ -93,7 +97,7 @@ class RichPDDeme(GS.PDDeme):
     def _fitness(self):
         if self.polymorphic:
             self.payoff = self.setup.genReducedPayoffMatrix(self.species)
-        elif self.payoff == None:
+        elif self.payoff is None:
             self.payoff = self.setup.derivePayoffMatrix(self.species)
         return self.fF(self.distribution, self.payoff)
 
@@ -124,8 +128,10 @@ class RichSuperDeme(GS.SuperDeme):
     """
     def __init__(self, setup, name="", species_override = None,
                  distribution_or = None):
-        if species_override == None: species_override = setup.strategyList
-        if distribution_or == None: distribution_or = setup.population
+        if species_override is None:
+            species_override = setup.strategyList
+        if distribution_or is None:
+            distribution_or = setup.population
         GS.SuperDeme.__init__(self, species_override, distribution_or, name)
         self.setup = setup
         if self.setup.noise:
@@ -294,7 +300,7 @@ class SimSetup(object):
               demes = None, mutators = [], PM = None, log = None):
         self.name = name
         self.strategyList = strategyList
-        if population == None:
+        if population is None:
             self.population = Dynamics.UniformDistribution(len(self.strategyList))
         else: self.population = array(population)
         self.correlation = correlation
@@ -332,7 +338,7 @@ class SimSetup(object):
 
     def getPayoffMatrix(self, log = None, progressCallback = lambda f:1):
         """Returns the payoff matrix for the setup."""
-        if self.cachedPM == None:
+        if self.cachedPM is None:
             self.cachedPM = PD.GenPayoffMatrix(self.strategyList,
               self._payoffArray, self.iterations, self.samples, self.gameNoise,
               log, progressCallback)
@@ -348,7 +354,7 @@ class SimSetup(object):
     def derivePayoffMatrix(self, strategies):
         """Returns a payoff matrix for the subset 'strategies' of the
         strategyList only."""
-        if self.indexDict == None:
+        if self.indexDict is None:
             self.indexDict = {}
             for i in range(len(self.strategyList)):
                 self.indexDict[self.strategyList[i].name] = i
@@ -392,7 +398,7 @@ class SimSetup(object):
                 break
         else:
             html.append("uniform population distribution<br />\n")
-        if self.demes != None:
+        if self.demes is not None:
             html.append("%i demes with sizes varying from %i to %i.<br />\n" % \
                 (self.demes.num, self.demes.minSize, self.demes.maxSize))
             if self.demes.interval == 1:
@@ -537,7 +543,7 @@ class Simulation(object):
             self.log.entryPoint("evranking")
 
     def createMasterDeme(self, population_override = None):
-        if population_override == None:
+        if population_override is None:
             population_override = self.setup.population
         if self.setup.demes:
             md = RichPDDeme(self.setup, distribution_or=population_override).\
@@ -562,7 +568,7 @@ class Simulation(object):
         return masterDeme.aggregate().distribution
 
     def simplexDynamics(self, population):
-        if self.simplexMD == None or \
+        if self.simplexMD is None or \
            isinstance(self.simplexMD, GS.SuperDeme) or \
            any(self.simplexMD.distribution != population):
             self.simplexMD = self.createMasterDeme(population)
@@ -601,7 +607,7 @@ class Simulation(object):
             PD.cache.flush()
             self.setup.cachedPM = None;  setup.cachedPM = None
             self.setup.cachedLog = None; setup.cachedLog = None
-        if self.setup.cachedPM == None:
+        if self.setup.cachedPM is None:
             self.log.clear()
             self.log.pageTitle(self.setup.name)
             self.log.append(H1+'<a name="top"></a>CoopSim - Simulation: '+\
@@ -669,7 +675,7 @@ class Simulation(object):
 
     def continueSim(self, record = None, refreshCallback = lambda :1,
                     withSimplex = True):
-        if self.setup == None:  return
+        if self.setup is None:  return
         self.notifier.statusBarHint("Running...")
         self.updateSimplexFlag = False
         if self.firstGeneration > 1:

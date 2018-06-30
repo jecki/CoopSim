@@ -54,31 +54,36 @@ class Deme(object):
             object.__setattr__(self, "fitnessCache", None)
         object.__setattr__(self, name, value)
 
-    def __init__(self, species, distribution = None, name=""):
+    def __init__(self, species, distribution=None, name=""):
         """Initializes the Deme with the list of species, the distribution
         vector and a name (if desired). The list of species is always
         deep-copied into the meme to allow for independet evolution of the
         species. However, species with the same name in different demes may
         be merged back, when demes are merged.
         """
-        assert len(species) > 0, "Too few species (%i)!"%len(species)
-        assert distribution == None or len(species) == len(distribution), \
+        assert len(species) > 0, "Too few species (%i)!" % len(species)
+        assert distribution is None or len(species) == len(distribution), \
                "Species list and distribution array are of unequal size!"
         self.fitnessCache = None
-        if distribution != None: self.__distribution = asarray(distribution)
-        else: self.__distribution = UniformDistribution(len(species))
-        if name: self.name = name
-        else: self.name = GenericIdentifier()
+        if distribution is not None:
+            self.__distribution = asarray(distribution)
+        else:
+            self.__distribution = UniformDistribution(len(species))
+        if name:
+            self.name = name
+        else:
+            self.name = GenericIdentifier()
         self.species = copy.deepcopy(species)
 
     def getDistribution(self):
         return self.__distribution
+
     def setDistribution(self, d):
         self.__distribution = d
         self.fitnessCache = None
     distribution = property(getDistribution, setDistribution)
 
-    def new(self, species, distribution = None, name=""):
+    def new(self, species, distribution=None, name=""):
         """Create a deme object of the same type."""
         return self.__class__(species, distribution, name)
 
@@ -130,7 +135,7 @@ class Deme(object):
 
     def fitness(self):
         """Returns the fitnesses of the species (as Numeric.array)."""
-        if self.fitnessCache == None: self.fitnessCache = self._fitness()
+        if self.fitnessCache is None: self.fitnessCache = self._fitness()
         return self.fitnessCache
 
     def replicate(self):
@@ -161,7 +166,8 @@ class Deme(object):
                 g = list(range(l, min(l+s, len(pool))))
                 g.extend(random.sample(rng, max(0,l+s-len(pool))))
                 l += s
-            else:  g = random.sample(rng, s)
+            else:
+                g = random.sample(rng, s)
             for st in g:  sg[st].append(count)
         species = [[] for i in range(N)]
         distribution = [[] for i in range(N)]
@@ -171,11 +177,13 @@ class Deme(object):
                 species[g].append(self.species[i])
                 distribution[g].append(chunks.pop())
         demes = []
-        for i in range(N): demes.append(self.new(species[i], distribution[i]))
-        #assert almostEqual(sum([sum(d.distribution) for d in demes]), 1.0), \
-        #    "self test failed %f"%sum([sum(d.distribution) for d in demes])
+        for i in range(N):
+            demes.append(self.new(species[i], distribution[i]))
+        # assert almostEqual(sum([sum(d.distribution) for d in demes]), 1.0), \
+        #     "self test failed %f"%sum([sum(d.distribution) for d in demes])
         distribution = norm(array([sum(d.distribution) for d in demes]))
-        for d in demes: d.normalize()
+        for d in demes:
+            d.normalize()
         return self.container(demes, distribution)
 
     def ranking(self):
@@ -280,7 +288,7 @@ class PDDeme(Deme):
         self.payoff = None
 
     def _fitness(self):
-        if self.polymorphic or self.payoff == None:
+        if self.polymorphic or self.payoff is None:
             self.payoff = PD.GenPayoffMatrix(self.species, payoffs=PD_PAYOFF)
         return matrixmultiply(self.payoff, self.distribution)
 
