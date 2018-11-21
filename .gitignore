@@ -14,4 +14,4 @@ __pycache__
 /PyPlotter/html_docs/
 *.pdf
 *.dvi
-.mypy_chache
+.mypy_cache
